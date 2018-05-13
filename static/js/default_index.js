@@ -16,130 +16,146 @@ var app = function() {
     // Enumerates an array.
     var enumerate = function(v) { var k=0; return v.map(function(e) {e._idx = k++;});};
 
-    function get_tracks_url(start_idx, end_idx) {
+    function get_memos_url(start_idx, end_idx) {
         var pp = {
             start_idx: start_idx,
             end_idx: end_idx
         };
-        return tracks_url + "?" + $.param(pp);
+        return memos_url + "?" + $.param(pp);
     }
 
-    self.get_tracks = function () {
-        $.getJSON(get_tracks_url(0, 10), function (data) {
-            self.vue.tracks = data.tracks;
-            self.vue.has_more = data.has_more;
-            self.vue.logged_in = data.logged_in;
-            enumerate(self.vue.tracks);
-        })
-    };
-
     self.get_more = function () {
-        var num_tracks = self.vue.tracks.length;
-        $.getJSON(get_tracks_url(num_tracks, num_tracks + 10), function (data) {
+        var num_memos = self.vue.memo_list.length;
+        $.getJSON(get_memos_url(num_memos, num_memos + 10), function (data) {
             self.vue.has_more = data.has_more;
-            self.extend(self.vue.tracks, data.tracks);
-            enumerate(self.vue.tracks);
+            self.extend(self.vue.memo_list, data.memo_list);
         });
     };
 
-    self.add_track_button = function () {
-        // The button to add a track has been pressed.
-        self.vue.is_adding_track = !self.vue.is_adding_track;
+    // *** Collect list of memos from server. ***
+    // (query from database, done from api.py)
+    self.get_memos = function(){
+
+        // Server call
+        // This is where the query to DB will be made in api.py
+        $.getJSON(
+            // memos_url,
+            get_memos_url(0, 10),
+            function (data) {
+
+                // Update the local data
+                self.vue.memo_list = data.memo_list;
+                self.vue.logged_in = data.logged_in;
+                self.vue.has_more = data.has_more;
+            })
     };
 
-    self.add_track = function () {
-        // The submit button to add a track has been added.
-        $.post(add_track_url,
+    self.add_memo_button = function () {
+        // The button to add a memo has been pressed.
+        self.vue.is_adding_memo = !self.vue.is_adding_memo;
+    };
+
+    self.add_memo = function () {
+        // The submit button to add a memo has been added.
+        $.post(add_memo_url,
             {
-                artist: self.vue.form_artist,
-                title: self.vue.form_track,
-                album: self.vue.form_album,
-                duration: self.vue.form_duration
+                title: self.vue.form_title,
+                memo: self.vue.form_memo
             },
             function (data) {
-                $.web2py.enableElement($("#add_track_submit"));
-                self.vue.tracks.unshift(data.track);
-                enumerate(self.vue.tracks);
+                $.web2py.enableElement($("#add_memo_submit"));
+                self.vue.memo_list.unshift(data.memo);
+
+                self.get_memos();
+                // enumerate(self.vue.memo_list);
+
             });
     };
 
-    self.delete_track = function(track_idx) {
-        $.post(del_track_url,
-            { track_id: self.vue.tracks[track_idx].id },
+    self.delete_memo = function(memo_id) {
+        $.post(del_memo_url,
+            {
+                memo_id: memo_id
+            },
             function () {
-                self.vue.tracks.splice(track_idx, 1);
-                enumerate(self.vue.tracks);
+                var idx = null;
+                for (var i = 0; i < self.vue.memo_list.length; i++) {
+                    if (self.vue.memo_list[i].id === memo_id) {
+                        // If I set this to i, it won't work, as the if below will
+                        // return false for items in first position.
+                        idx = i + 1;
+                        break;
+                    }
+                }
+                if (idx) {
+                    self.vue.memo_list.splice(idx - 1, 1);
+                }
             }
         )
     };
 
-    self.select_track = function(track_idx) {
-        var track = self.vue.tracks[track_idx];
-        if (self.vue.selected_id === track.id) {
-            // Deselect track.
-            self.vue.selected_id = -1;
-        } else {
-            // Select it.
-            self.vue.selected_idx = track_idx;
-            self.vue.selected_id = track.id;
-            self.vue.selected_url = track.track_url;
-        }
-        if (self.vue.selected_url && self.vue.selected_id > -1) {
-            // We play the track.
-            self.inc_play_track(track_idx);
-            $("#uploader_div").hide();
-        } else {
-            // Shows the uploader if we don't have a track url.
-            // Also sets properly the attribute of the upload form.
-            self.upload_url = upload_url + "&" + $.param({track_id: track.id});
-            $("#uploader_div").show();
-        }
+    self.edit_memo_button = function () {
+        // The button to edit a memo has been pressed.
+        self.vue.is_editing_memo = !self.vue.is_editing_memo;
     };
 
-    self.inc_play_track = function (track_idx) {
-        var track = self.vue.tracks[track_idx];
-        track.num_plays += 1;
-        $.post(
-            inc_plays_url,
-            {track_id: track.id},
-            function () {}
+    self.edit_memo = function(memo_id) {
+        $.post(edit_memo_url,
+            {
+                memo_id: memo_id,
+                title: self.vue.form_title,
+                memo: self.vue.form_memo
+            },
+            function (data) {
+                $.web2py.enableElement($("#edit_memo_submit"));
+
+                // enumerate(self.vue.memos);
+                self.get_memos();
+            });
+    };
+
+    self.toggle_public = function(memo_id) {
+        $.post(toggle_public_url,
+            {
+                memo_id: memo_id
+
+            },
+            function () {
+                self.get_memos();
+            }
         )
     };
 
-    self.delete_uploaded_track = function() {
-        $.post(
-            delete_file_url,
-            {track_id: self.vue.track_id},
-            function () {}
-        )
-    };
-
-
+    // ***** Complete as needed. *****
     self.vue = new Vue({
         el: "#vue-div",
-        delimiters: ['${', '}'],
+        delimiters: ['${', '}'],            //indicates vue object
         unsafeDelimiters: ['!{', '}'],
         data: {
-            is_adding_track: false,
-            tracks: [],
             logged_in: false,
+            memo_list:[],
             has_more: false,
-            form_artist: null,
-            form_track: null,
-            form_album: null,
-            selected_id: -1  // Track selected to play.
+            is_adding_memo: false,
+            is_editing_memo: false,
+            form_title: null,
+            form_memo: null,
+            form_public: false,
         },
         methods: {
+            get_memos: self.get_memos,
             get_more: self.get_more,
-            add_track_button: self.add_track_button,
-            add_track: self.add_track,
-            delete_track: self.delete_track,
-            select_track: self.select_track
+            add_memos_url: self.add_memos_url,
+            add_memo_button: self.add_memo_button,
+            add_memo: self.add_memo,
+            delete_memo: self.delete_memo,
+            edit_memo_button: self.edit_memo_button,
+            edit_memo: self.edit_memo,
+            toggle_public: self.toggle_public
         }
-
     });
 
-    self.get_tracks();
+    // Get initial data
+    self.get_memos();
     $("#vue-div").show();
 
     return self;
@@ -150,4 +166,3 @@ var APP = null;
 // This will make everything accessible from the js console;
 // for instance, self.x above would be accessible as APP.x
 jQuery(function(){APP = app();});
-

@@ -1,3 +1,5 @@
+[v-cloak] { display:none; }
+
 /* line 1, ../sass/_main.scss */
 .colorful {
   color: #bb8833;
@@ -9,37 +11,71 @@ div.main_content {
 }
 
 /* line 9, ../sass/_main.scss */
+div.add_btn {
+  margin: 5px;
+}
+/* line 11, ../sass/_main.scss */
+div.add_btn a {
+  padding: 10px;
+}
+
+/* line 16, ../sass/_main.scss */
+div.memo {
+  margin: 5px;
+  border: 2px solid gray;
+  padding: 5px;
+}
+/* line 21, ../sass/_main.scss */
+div.memo div.memo_title {
+  font-weight: bold;
+  font-size: 150%;
+}
+/* line 25, ../sass/_main.scss */
+div.memo div.button_list {
+  text-align: right;
+  margin-top: 10px;
+}
+/* line 27, ../sass/_main.scss */
+div.memo div.button_list div.buttons {
+  display: inline-block;
+}
+/* line 31, ../sass/_main.scss */
+div.memo div.button_list a.btn {
+  padding: 10px;
+}
+
+/* line 38, ../sass/_main.scss */
 div.result_table {
   width: 100%;
 }
 
-/* line 12, ../sass/_main.scss */
+/* line 41, ../sass/_main.scss */
 table.track_table {
   width: 100%;
   margin-top: 10px;
   margin-bottom: 10px;
 }
 
-/* line 18, ../sass/_main.scss */
+/* line 47, ../sass/_main.scss */
 button:disabled {
   background-color: lightgray;
 }
-/* line 20, ../sass/_main.scss */
+/* line 49, ../sass/_main.scss */
 button:disabled:hover {
   box-shadow: none;
 }
 
-/* line 25, ../sass/_main.scss */
+/* line 54, ../sass/_main.scss */
 td.play_selector {
   width: 20px;
 }
 
-/* line 29, ../sass/_main.scss */
+/* line 58, ../sass/_main.scss */
 div.music_controller {
   width: 100%;
   margin-bottom: 20px;
 }
-/* line 32, ../sass/_main.scss */
+/* line 61, ../sass/_main.scss */
 div.music_controller audio {
   width: 100%;
 }

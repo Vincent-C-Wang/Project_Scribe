@@ -12,12 +12,18 @@
 def index():
     return dict()
 
+def no_swearing(form):
+    if 'fool' in form.vars.memo:
+        form.errors.memo = T('No swearing please')
 
 def add():
-    """This is a temporary function to allow users to easily add tracks, mainly for testing."""
-    form = SQLFORM(db.track)
-    if form.process().accepted:
-        redirect(URL('default', 'index'))
+    """Temporary function for adding a checklist."""
+    form = SQLFORM(db.checklist)
+    if form.process(onvalidation=no_swearing).accepted:
+        session.flash = T("Checklist added.")
+        redirect(URL('default','index'))
+    elif form.errors:
+        session.flash = T('Please correct the info')
     return dict(form=form)
 
 def uploader():
