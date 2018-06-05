@@ -1,0 +1,12 @@
+Here's a general guideline for committing: (ignore quotations)
+
+0.) Both the remote repo and your local repo need to be sync'd before everything else, so [git fetch] and [git pull] to grab the latest 
+    stuff from the remote repo.
+
+1.) Assuming you're on the same branch you've been working on and want to commit changes to, use [git add *]. 
+    The following link has other potentially useful variations: 
+        https://stackoverflow.com/questions/572549/difference-between-git-add-a-and-git-add
+
+2.) Do [git commit -am "[some message]"] to create the commit.
+
+3.) Then do [git push] to actually upload the commit to the remote repo.(edited)
