@@ -94,9 +94,16 @@ var app = function() {
         )
     };
 
-    self.edit_memo_button = function () {
-        // The button to edit a memo has been pressed.
-        self.vue.is_editing_memo = !self.vue.is_editing_memo;
+    // This is so whenever "Edit Memo" is pressed, it only applies for the desired memo
+    self.edit_memo_button = function(memo_id) {
+        $.post(edit_memo_button_url,
+            {
+                memo_id: memo_id
+            },
+            function () {
+                self.get_memos();
+            }
+        )
     };
 
     self.edit_memo = function(memo_id) {
@@ -114,11 +121,11 @@ var app = function() {
             });
     };
 
+    // Whenever the toggle button is pressed, it only applies for the desired memo
     self.toggle_public = function(memo_id) {
         $.post(toggle_public_url,
             {
                 memo_id: memo_id
-
             },
             function () {
                 self.get_memos();

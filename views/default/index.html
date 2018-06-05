@@ -8,6 +8,7 @@
     var memos_url = "{{=URL('api', 'get_memos')}}";
     var add_memo_url = "{{=URL('api', 'add_memo', user_signature=True)}}";
     var del_memo_url = "{{=URL('api', 'del_memo', user_signature=True)}}";
+    var edit_memo_button_url = "{{=URL('api', 'edit_memo_button', user_signature=True)}}";
     var edit_memo_url = "{{=URL('api', 'edit_memo', user_signature=True)}}";
     var toggle_public_url = "{{=URL('api', 'toggle_public', user_signature=True)}}";
 </script>
@@ -34,7 +35,7 @@
                     <li v-for="memo in memo_list">
                         <!-- Memo text -->
                         <div v-if="memo.is_public == 'True'" class="memo">
-                            <div class="memo_text" v-if="!is_editing_memo">
+                            <div class="memo_text">
                                 <div class="memo_title">${memo.title}</div>
                                 <div class="memo_content">${memo.memo}</div>
                             </div>
@@ -49,7 +50,7 @@
         <!-- ***** Show personal memos above other users' memos when logged in ***** -->
         {{if auth.user is not None:}}
 
-        <div v-f="logged_in" class="my_memos">
+        <div v-if="logged_in" class="my_memos">
             <h2>My Memos</h2>
 
             <!-- Button to add a new memo -->
@@ -107,13 +108,13 @@
 
                         <!-- Memo text -->
                         <div v-if="memo.user_email == '{{=auth.user.email}}'" class="memo">
-                            <div class="memo_text" v-if="!is_editing_memo">
+                            <div class="memo_text" v-if="memo.is_editing == 'False'">
                                 <div class="memo_title">${memo.title}</div>
                                 <div class="memo_content">${memo.memo}</div>
                             </div>
 
                             <!-- Form to edit memos -->
-                            <div v-if="is_editing_memo" id="edit_memo_div">
+                            <div v-if="memo.is_editing == 'True'" id="edit_memo_div">
                                 <form action="#" v-on:submit.prevent="edit_memo(memo.id)"
                                       class="form-horizontal"
                                       enctype="multipart/form-data" method="post">
@@ -122,7 +123,8 @@
                                             <input class="form-control string"
                                                    id="no_table_title"
                                                    v-model="form_title"
-                                                   value="hey" name="title" type="text" />
+                                                   placeholder="Title"
+                                                   name="title" type="text" />
                                             <span class="help-block"></span>
                                         </div>
                                     </div>
@@ -131,14 +133,15 @@
                                             <input class="form-control string"
                                                    id="no_table_content"
                                                    v-model="form_memo"
-                                                   value="memo.memo" name="content" type="text" />
+                                                   placeholder="Content"
+                                                   name="content" type="text" />
                                             <span class="help-block"></span>
                                         </div>
                                     </div>
                                     <div class="form-group" id="submit_record__row">
                                         <div>
                                             <input class="btn btn-primary" id="edit_memo_submit"
-                                                   type="submit" value="Submit" />
+                                                   type="submit" value="Save" />
                                         </div>
                                     </div>
                                 </form>
@@ -175,14 +178,14 @@
 
                                         <!-- Button to edit a memo -->
                                         <div class="edit_btn">
-                                            <button v-if="!is_editing_memo" class="btn"
-                                                    v-on:click="edit_memo_button()"
+                                            <button v-if="memo.is_editing == 'False'" class="btn"
+                                                    v-on:click="edit_memo_button(memo.id)"
                                                     :disabled="!logged_in"
                                                     v-bind:class="{'disabled': !logged_in}">
                                                 <i class="fa fa-edit fa-lg"></i> Edit Memo
                                             </button>
-                                            <button v-if="is_editing_memo" class="btn"
-                                                    v-on:click="edit_memo_button()">
+                                            <button v-if="memo.is_editing == 'True'" class="btn"
+                                                    v-on:click="edit_memo_button(memo.id)">
                                                 <i class="fa fa-times"></i> Cancel
                                             </button>
                                         </div>

@@ -19,7 +19,7 @@ db.define_table('checklist',
                 Field('memo', 'text'),
                 Field('updated_on', 'datetime', update=datetime.datetime.utcnow()),
                 Field('is_public', default=False),
-                # Field('is_editing', default=False)
+                Field('is_editing', default=False)
                 )
 
 db.checklist.user_email.writable = False

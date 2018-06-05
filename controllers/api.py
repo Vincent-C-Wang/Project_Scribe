@@ -27,7 +27,8 @@ def get_memos():
                 title = r.title,
                 memo = r.memo,
                 is_public = r.is_public,
-                user_email = r.user_email
+                user_email = r.user_email,
+                is_editing = r.is_editing
             )
             memo_list.append(t)
         else:
@@ -56,6 +57,18 @@ def del_memo():
     return "ok"
 
 @auth.requires_signature()
+def edit_memo_button():
+    memo_id = int(request.vars.memo_id)
+    m = db.checklist[memo_id]
+
+    if m.is_editing == 'False':
+        m.update_record(is_editing = True)
+    else:
+        m.update_record(is_editing = False)
+
+    return response.json(dict(checklist=m))
+
+@auth.requires_signature()
 def edit_memo():
     logger.info("memo_id: %r", request.vars.memo_id)
     m = db(db.checklist.id == request.vars.memo_id).update(
@@ -73,11 +86,5 @@ def toggle_public():
         m.update_record(is_public = True)
     else:
         m.update_record(is_public = False)
-
-    # logger.info("memo_id: %r", request.vars.memo_id)
-    # m = db(db.checklist.id == request.vars.memo_id).update(
-    #     title=request.vars.title,
-    #     memo=request.vars.memo
-    # )
 
     return response.json(dict(checklist=m))
