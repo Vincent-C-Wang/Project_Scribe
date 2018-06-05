@@ -1,4 +1,4 @@
-Here's a general guideline for committing: (ignore quotations)
+Here's a general guideline for committing via git: (ignore quotations)
 
 0.) Both the remote repo and your local repo need to be sync'd before everything else, so [git fetch] and [git pull] to grab the latest 
     stuff from the remote repo.
