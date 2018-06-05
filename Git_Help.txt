@@ -1,7 +1,7 @@
 Here's a general guideline for committing via git: (ignore quotations)
 
-0.) Both the remote repo and your local repo need to be sync'd before everything else, so [git fetch] and [git pull] to grab the latest 
-    stuff from the remote repo.
+0.) Both the remote repo and your local repo need to be sync'd before everything else, so [git fetch] and [git pull origin [remote branch]]
+to grab the latest stuff from the remote repo.
 
 1.) Assuming you're on the same branch you've been working on and want to commit changes to, use [git add *]. 
     The following link has other potentially useful variations: 
