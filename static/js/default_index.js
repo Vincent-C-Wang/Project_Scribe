@@ -1,4 +1,7 @@
 // This is the js for the default/index.html view.
+import wysiwyg from "vue-wysiwyg";
+Vue.use(wysiwyg, {});
+
 
 var app = function() {
 
@@ -63,7 +66,7 @@ var app = function() {
                 memo: self.vue.form_memo
             },
             function (data) {
-                $.web2py.enableElement($("#add_memo_submit"));
+                // $.web2py.enableElement($("#add_memo_submit"));
                 self.vue.memo_list.unshift(data.memo);
 
                 self.get_memos();

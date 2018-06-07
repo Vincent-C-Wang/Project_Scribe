@@ -22,8 +22,11 @@ db.define_table('scrolls',
                 Field('is_editing', default=False),
                 Field('is_favorite', default=False),
                 )
-
-db.define_table('')
+db.define_table('favorites',
+                Field('current_user', 'reference auth_user', default=auth.user_id),
+                Field('owner'),
+                Field('post_id')
+                )
 
 db.checklist.user_email.writable = False
 db.checklist.user_email.readable = False

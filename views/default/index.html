@@ -2,6 +2,7 @@
 
 {{block head}}
 <script src="{{=URL('static', 'js/vue.js')}}"></script>
+<script src="{{=URL('static', 'js/default_index.js')}}"></script>
 
 <!-- Whatever functions you made in default_index.js, put them here! -->
 <script>
@@ -12,6 +13,7 @@
     var edit_memo_url = "{{=URL('api', 'edit_memo', user_signature=True)}}";
     var toggle_public_url = "{{=URL('api', 'toggle_public', user_signature=True)}}";
 </script>
+
 {{end}}
 
 <div class="main_content">
@@ -52,7 +54,6 @@
 
         <div v-if="logged_in" class="my_memos">
             <h2>My Memos</h2>
-
             <!-- Button to add a new memo -->
             <div class="add_btn">
                 <button v-if="!is_adding_memo" class="btn"
@@ -98,7 +99,6 @@
                     </div>
                 </form>
             </div>
-
 
 
             <!-- List out all memos owned by user  -->
@@ -228,4 +228,5 @@
     </div>
 </div>
 
-<script src="{{=URL('static', 'js/default_index.js')}}"></script>
+
+
