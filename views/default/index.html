@@ -3,24 +3,22 @@
 {{block head}}
 <script src="{{=URL('static', 'js/vue.js')}}"></script>
 
-<!-- Whatever functions you made in default_index.js, put them here! -->
 <script>
-    var memos_url = "{{=URL('api', 'get_memos')}}";
-    var add_memo_url = "{{=URL('api', 'add_memo', user_signature=True)}}";
-    var del_memo_url = "{{=URL('api', 'del_memo', user_signature=True)}}";
-    var edit_memo_button_url = "{{=URL('api', 'edit_memo_button', user_signature=True)}}";
-    var edit_memo_url = "{{=URL('api', 'edit_memo', user_signature=True)}}";
-    var toggle_public_url = "{{=URL('api', 'toggle_public', user_signature=True)}}";
+    var users_url = "{{=URL('api', 'get_users')}}";
+    var scrolls_url = "{{=URL('api', 'get_scrolls')}}";
+    var favorite_scroll_url = "{{=URL('api', 'favorite_scroll', user_signature=True)}}";
+    var unfavorite_scroll_url = "{{=URL('api', 'unfavorite_scroll', user_signature=True)}}";
+    var add_scroll_url = "{{=URL('api', 'add_scroll', user_signature=True)}}";
+    var del_scroll_url = "{{=URL('api', 'del_scroll', user_signature=True)}}";
+    var edit_scroll_button_url = "{{=URL('api', 'edit_scroll_button', user_signature=True)}}";
+    var edit_scroll_url = "{{=URL('api', 'edit_scroll', user_signature=True)}}";
 </script>
 {{end}}
 
 <div class="main_content">
-
-    <!-- Anything that needs vue.js must be within this div. You can just recycle most of that from hw2. -->
     <div id="vue-div" v-cloak class="display:none">
-        <!-- Your code goes here.  Remember to call $("#vue-div").show() once you get the data for the first time. -->
 
-        <!-- ***** Show only public memos when logged off ***** -->
+        <!-- ***** When logged off. ***** -->
         {{if auth.user is None:}}
         <img class="logo" src="https://i.imgur.com/JwiMl8k.png" alt="Scribe logo">
         <div>
@@ -46,7 +44,7 @@
 
         {{pass}}
 
-        <!-- ***** Show personal memos above other users' memos when logged in ***** -->
+        <!-- ***** When logged in. ***** -->
         {{if auth.user is not None:}}
 
         <div class="black sidebar">
@@ -56,32 +54,37 @@
             <button class="side center fa fa-star"> Favorites</button>
         </div>
 
-        <div v-if="logged_in" class="my_memos">
+        <div v-if="logged_in" class="my_scrolls">
             <div class="container middle max900">
-                <!-- Button to add a new memo -->
-                <button v-if="!is_adding_memo" class="right fa fa-pencil-square"
-                            v-on:click="add_memo_button()"
+                <!-- Button to add a new scroll -->
+                <button v-if="!is_adding_scroll" class="right fa fa-pencil-square"
+                            v-on:click="add_scroll_button()"
                             :disabled="!logged_in"
                             v-bind:class="{'disabled': !logged_in}">
                             Scribble
                 </button>
-                <button v-if="is_adding_memo" class="btn "
-                            v-on:click="add_memo_button()">
-                            <i class="fa fa-times"></i>
-                            Cancel
-                </button>
-                <h2>My Memos</h2>
-                <!-- Form to add memos -->
-                <div v-if="is_adding_memo" id="add_memo_div">
-                    <form action="#" v-on:submit.prevent="add_memo"
+
+                <h2>My Scribbles</h2>
+                <!-- Form to add scrolls -->
+                <div v-if="is_adding_scroll" id="add_scroll_div">
+                    <form action="#" v-on:submit.prevent="add_scroll"
                           class="form-horizontal"
                           enctype="multipart/form-data" method="post">
                         <div class="form-group" id="no_table_title__row">
                             <div>
                                 <input class="form-control string"
                                        id="no_table_title"
-                                       v-model="form_title"
+                                       v-model="form_title_add"
                                        placeholder="Title" name="title" type="text" />
+                                <span class="help-block"></span>
+                            </div>
+                        </div>
+                        <div class="form-group" id="no_table_abstract__row">
+                            <div>
+                                <input class="form-control string"
+                                       id="no_table_abstract"
+                                       v-model="form_abstract_add"
+                                       placeholder="Abstract" name="abstract" type="text" />
                                 <span class="help-block"></span>
                             </div>
                         </div>
@@ -89,46 +92,62 @@
                             <div>
                                 <input class="form-control string"
                                        id="no_table_content"
-                                       v-model="form_memo"
+                                       v-model="form_post_add"
                                        placeholder="Content" name="content" type="text" />
                                 <span class="help-block"></span>
                             </div>
                         </div>
                         <div class="form-group" id="submit_record__row">
                             <div>
-                                <input class="btn btn-primary" id="add_memo_submit"
+                                <input class="btn btn-primary" id="add_scroll_submit"
                                        type="submit" value="Submit"/>
+                                <button v-if="is_adding_scroll" class="btn "
+                                        v-on:click="add_scroll_button()">
+                                        <i class="fa fa-times"></i>
+                                        Cancel
+                                </button>
                             </div>
+
                         </div>
                     </form>
                 </div>
 
-
-
-                <!-- List out all memos owned by user  -->
+                <!-- List out all scrolls owned by user  -->
                 <div>
                     <ul>
-                        <li v-for="memo in memo_list">
+                        <li v-for="scroll in scroll_list">
 
-                            <!-- Memo text -->
-                            <div v-if="memo.user_email == '{{=auth.user.email}}'" class="memo">
-                                <div class="memo_text" v-if="memo.is_editing == 'False'">
-                                    <div class="memo_title">${memo.title}</div>
-                                    <div class="memo_content">${memo.memo}</div>
+                            <!-- Scroll text -->
+                            <div v-if="scroll.user_email == '{{=auth.user.email}}'" class="memo">
+                                <div class="scroll_text" v-if="scroll.is_editing == 'False'">
+                                    <div class="scroll_title">${scroll.title}</div>
+                                    <div class="scroll_abstract">${scroll.abstract}</div>
+                                    <div class="scroll_content">${scroll.post}</div>
                                 </div>
 
-                                <!-- Form to edit memos -->
-                                <div v-if="memo.is_editing == 'True'" id="edit_memo_div">
-                                    <form action="#" v-on:submit.prevent="edit_memo(memo.id)"
+                                <!-- Form to edit scrolls -->
+                                <div v-if="scroll.is_editing == 'True'" id="edit_scroll_div">
+                                    <form action="#" v-on:submit.prevent="edit_scroll(scroll.id, scroll.title,
+                                                                            scroll.abstract, scroll.post)"
                                           class="form-horizontal"
                                           enctype="multipart/form-data" method="post">
                                         <div class="form-group" id="no_table_title__row">
                                             <div>
                                                 <input class="form-control string"
                                                        id="no_table_title"
-                                                       v-model="form_title"
+                                                       v-model="scroll.title"
                                                        placeholder="Title"
                                                        name="title" type="text" />
+                                                <span class="help-block"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" id="no_table_abstract__row">
+                                            <div>
+                                                <input class="form-control string"
+                                                       id="no_table_abstract"
+                                                       v-model="scroll.abstract"
+                                                       placeholder="Abstract"
+                                                       name="abstract" type="text" />
                                                 <span class="help-block"></span>
                                             </div>
                                         </div>
@@ -136,7 +155,7 @@
                                             <div>
                                                 <input class="form-control string"
                                                        id="no_table_content"
-                                                       v-model="form_memo"
+                                                       v-model="scroll.post"
                                                        placeholder="Content"
                                                        name="content" type="text" />
                                                 <span class="help-block"></span>
@@ -144,7 +163,7 @@
                                         </div>
                                         <div class="form-group" id="submit_record__row">
                                             <div>
-                                                <input class="btn btn-primary" id="edit_memo_submit"
+                                                <input class="btn btn-primary" id="edit_scroll_submit"
                                                        type="submit" value="Save" />
                                             </div>
                                         </div>
@@ -156,40 +175,25 @@
                                     <div class="button_list">
                                         <div class="buttons">
 
-                                            <!-- Button to delete a memo -->
+                                            <!-- Button to delete a scroll -->
                                             <div class="del_btn">
-                                                <button v-on:click="delete_memo(memo.id)"
+                                                <button v-on:click="delete_scroll(scroll.id)"
                                                         :disabled="!logged_in"
                                                         v-bind:class="{'disabled': !logged_in}">
                                                     <i class="fa fa-trash fa-lg"></i>
                                                 </button>
                                             </div>
 
-                                            <!-- Button to toggle whether a memo is public or private -->
-                                            <div class="toggle_btn">
-                                                <button v-if="memo.is_public == 'False'"
-                                                        v-on:click="toggle_public(memo.id)"
-                                                        :disabled="!logged_in"
-                                                        v-bind:class="{'disabled': !logged_in}">
-                                                    <i class="fa fa-user"></i>
-                                                </button>
-
-                                                <button v-if="memo.is_public == 'True'"
-                                                        v-on:click="toggle_public(memo.id)">
-                                                    <i class="fa fa-users"></i>
-                                                </button>
-                                            </div>
-
-                                            <!-- Button to edit a memo -->
+                                            <!-- Button to edit a scroll -->
                                             <div class="edit_btn">
-                                                <button v-if="memo.is_editing == 'False'" class="btn"
-                                                        v-on:click="edit_memo_button(memo.id)"
+                                                <button v-if="scroll.is_editing == 'False'" class="btn"
+                                                        v-on:click="edit_scroll_button(scroll.id)"
                                                         :disabled="!logged_in"
                                                         v-bind:class="{'disabled': !logged_in}">
-                                                    <i class="fa fa-edit fa-lg"></i> Edit Memo
+                                                    <i class="fa fa-edit fa-lg"></i> Edit Scribble
                                                 </button>
-                                                <button v-if="memo.is_editing == 'True'" class="btn"
-                                                        v-on:click="edit_memo_button(memo.id)">
+                                                <button v-if="scroll.is_editing == 'True'" class="btn"
+                                                        v-on:click="edit_scroll_button(scroll.id)">
                                                     <i class="fa fa-times"></i> Cancel
                                                 </button>
                                             </div>
@@ -206,26 +210,50 @@
                         Load more
                     </button>
                 </div>
+              <!-- Show all other public memos below personal ones -->
+              <div class="other_scrolls">
+                  <h2>Other User Scribbles</h2>
+                  <div>
+                      <ul>
+                          <li v-for="scroll in scroll_list">
+                              <!-- Scroll text -->
+                              <div v-if="scroll.user_email != '{{=auth.user.email}}'" class="memo">
+                                  <div class="scroll_text">
+                                      <div class="scroll_title">${scroll.title}</div>
+                                      <div class="scroll_abstract">${scroll.abstract}</div>
+                                      <div class="scroll_content">${scroll.post}</div>
 
-                <!-- Show all other public memos below personal ones -->
-                <div class="other_memos">
-                    <h2>Other User Memos</h2>
-                    <div>
-                        <ul>
-                            <li v-for="memo in memo_list">
-                                <!-- Memo text -->
-                                <div v-if="memo.is_public == 'True'
-                                            && memo.user_email != '{{=auth.user.email}}'"
-                                     class="memo">
-                                    <div class="memo_text" v-if="!is_editing_memo">
-                                        <div class="memo_title">${memo.title}</div>
-                                        <div class="memo_content">${memo.memo}</div>
-                                    </div>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+                                      <div>
+                                          <!-- List of buttons -->
+                                          <div class="button_list">
+                                              <div class="buttons">
+
+                                                  <!-- Button to add a scroll as a favorite -->
+                                                  <div class="fav_btn">
+                                                      <button v-on:click="favorite_scroll(scroll.id, scroll.user_email)"
+                                                              :disabled="!logged_in"
+                                                              v-bind:class="{'disabled': !logged_in}"
+                                                              v-if="scroll.is_favorite == 'False'">
+                                                        <i class="fa fa-asterisk"></i>
+                                                        Add to Favorites
+                                                      </button>
+                                                      <button v-on:click="unfavorite_scroll(scroll.id)"
+                                                              :disabled="!logged_in"
+                                                              v-bind:class="{'disabled': !logged_in}"
+                                                              v-if="scroll.is_favorite == 'True'">
+                                                        <i class="fa fa-asterisk"></i>
+                                                        Favorited!
+                                                      </button>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </li>
+                      </ul>
+                  </div>
+              </div>
             </div>
         {{pass}}
 

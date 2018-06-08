@@ -16,121 +16,133 @@ var app = function() {
     // Enumerates an array.
     var enumerate = function(v) { var k=0; return v.map(function(e) {e._idx = k++;});};
 
-    function get_memos_url(start_idx, end_idx) {
+    // *** Collect list of other users from database. ***
+    self.get_users = function(){
+        $.getJSON(
+            users_url,
+            function (data) {
+                // Update the local data
+                self.vue.users_list = data.users_list;
+            })
+    };
+
+    function get_scrolls_url(start_idx, end_idx) {
         var pp = {
             start_idx: start_idx,
             end_idx: end_idx
         };
-        return memos_url + "?" + $.param(pp);
+        return scrolls_url + "?" + $.param(pp);
     }
 
     self.get_more = function () {
-        var num_memos = self.vue.memo_list.length;
-        $.getJSON(get_memos_url(num_memos, num_memos + 10), function (data) {
+        var num_scrolls = self.vue.scroll_list.length;
+        $.getJSON(get_scrolls_url(num_scrolls, num_scrolls + 10), function (data) {
             self.vue.has_more = data.has_more;
-            self.extend(self.vue.memo_list, data.memo_list);
+            self.extend(self.vue.scroll_list, data.scroll_list);
         });
     };
 
-    // *** Collect list of memos from server. ***
-    // (query from database, done from api.py)
-    self.get_memos = function(){
-
-        // Server call
-        // This is where the query to DB will be made in api.py
+    // *** Collect logged user info and list of scrolls from database. ***
+    self.get_scrolls = function(){
         $.getJSON(
-            // memos_url,
-            get_memos_url(0, 10),
+            // scrolls_url,
+            get_scrolls_url(0, 10),
             function (data) {
-
                 // Update the local data
-                self.vue.memo_list = data.memo_list;
+                self.vue.scroll_list = data.scroll_list;
                 self.vue.logged_in = data.logged_in;
+                self.vue.logged_id = data.logged_id;
+                self.vue.logged_user = data.logged_user;
                 self.vue.has_more = data.has_more;
             })
     };
 
-    self.add_memo_button = function () {
-        // The button to add a memo has been pressed.
-        self.vue.is_adding_memo = !self.vue.is_adding_memo;
+    self.favorite_scroll = function (scroll_id, owner_email) {
+        $.post(favorite_scroll_url,
+            {
+                logged_id: self.vue.logged_id,
+                owner_email: owner_email,
+                scroll_id: scroll_id
+            },
+            function () {
+                self.get_scrolls();
+            })
     };
 
-    self.add_memo = function () {
-        // The submit button to add a memo has been added.
-        $.post(add_memo_url,
+    self.unfavorite_scroll = function (scroll_id) {
+        $.post(unfavorite_scroll_url,
             {
-                title: self.vue.form_title,
-                memo: self.vue.form_memo
+                scroll_id: scroll_id
+            },
+            function () {
+                self.get_scrolls();
+            })
+    };
+
+    self.add_scroll_button = function () {
+        // The button to add a scroll has been pressed.
+        self.vue.is_adding_scroll = !self.vue.is_adding_scroll;
+    };
+
+    self.add_scroll = function () {
+        $.post(add_scroll_url,
+            {
+                title: self.vue.form_title_add,
+                abstract: self.vue.form_abstract_add,
+                post: self.vue.form_post_add
             },
             function (data) {
-                $.web2py.enableElement($("#add_memo_submit"));
-                self.vue.memo_list.unshift(data.memo);
-
-                self.get_memos();
-                // enumerate(self.vue.memo_list);
-
+                $.web2py.enableElement($("#add_scroll_submit"));
+                self.vue.scroll_list.unshift(data.scroll);
+                self.add_scroll_button();
+                self.get_scrolls();
+                // enumerate(self.vue.scroll_list);
             });
     };
 
-    self.delete_memo = function(memo_id) {
-        $.post(del_memo_url,
+    self.delete_scroll = function(scroll_id) {
+        $.post(del_scroll_url,
             {
-                memo_id: memo_id
+                scroll_id: scroll_id
             },
             function () {
                 var idx = null;
-                for (var i = 0; i < self.vue.memo_list.length; i++) {
-                    if (self.vue.memo_list[i].id === memo_id) {
-                        // If I set this to i, it won't work, as the if below will
-                        // return false for items in first position.
+                for (var i = 0; i < self.vue.scroll_list.length; i++) {
+                    if (self.vue.scroll_list[i].id === scroll_id) {
                         idx = i + 1;
                         break;
                     }
                 }
                 if (idx) {
-                    self.vue.memo_list.splice(idx - 1, 1);
-                }
-            }
-        )
+                    self.vue.scroll_list.splice(idx - 1, 1);
+                }})
     };
 
-    // This is so whenever "Edit Memo" is pressed, it only applies for the desired memo
-    self.edit_memo_button = function(memo_id) {
-        $.post(edit_memo_button_url,
+    // This is so whenever "Edit Scroll" is pressed, it only applies for the desired scroll
+    self.edit_scroll_button = function(scroll_id) {
+        $.post(edit_scroll_button_url,
             {
-                memo_id: memo_id
+                scroll_id: scroll_id
             },
             function () {
-                self.get_memos();
-            }
-        )
+                self.get_scrolls();
+            })
     };
 
-    self.edit_memo = function(memo_id) {
-        $.post(edit_memo_url,
+    self.edit_scroll = function(scroll_id, new_title, new_abs, new_post) {
+        $.post(edit_scroll_url,
             {
-                memo_id: memo_id,
-                title: self.vue.form_title,
-                memo: self.vue.form_memo
+                scroll_id: scroll_id,
+                title: new_title,
+                abstract: new_abs,
+                post: new_post
             },
             function (data) {
-                $.web2py.enableElement($("#edit_memo_submit"));
-
-                // enumerate(self.vue.memos);
-                self.get_memos();
+                $.web2py.enableElement($("#edit_scroll_submit"));
+                // enumerate(self.vue.scroll_list);
+                self.edit_scroll_button(scroll_id);
+                self.get_scrolls();
             });
-    };
-
-    // Whenever the toggle button is pressed, it only applies for the desired memo
-    self.toggle_public = function(memo_id) {
-        $.post(toggle_public_url,
-            {
-                memo_id: memo_id
-            },
-            function () {
-                self.get_memos();
-            }
-        )
     };
 
     // ***** Complete as needed. *****
@@ -140,29 +152,32 @@ var app = function() {
         unsafeDelimiters: ['!{', '}'],
         data: {
             logged_in: false,
-            memo_list:[],
+            logged_user: null,
+            logged_id: null,
+            users_list: [],
+            scroll_list: [],
             has_more: false,
-            is_adding_memo: false,
-            is_editing_memo: false,
-            form_title: null,
-            form_memo: null,
-            form_public: false,
+            is_adding_scroll: false,
+            is_editing_scroll: false,
+            form_title_add: null,
+            form_abstract_add: null,
+            form_post_add: null,
         },
         methods: {
-            get_memos: self.get_memos,
+            get_scrolls: self.get_scrolls,
             get_more: self.get_more,
-            add_memos_url: self.add_memos_url,
-            add_memo_button: self.add_memo_button,
-            add_memo: self.add_memo,
-            delete_memo: self.delete_memo,
-            edit_memo_button: self.edit_memo_button,
-            edit_memo: self.edit_memo,
-            toggle_public: self.toggle_public
+            favorite_scroll: self.favorite_scroll,
+            unfavorite_scroll: self.unfavorite_scroll,
+            add_scroll_button: self.add_scroll_button,
+            add_scroll: self.add_scroll,
+            delete_scroll: self.delete_scroll,
+            edit_scroll_button: self.edit_scroll_button,
+            edit_scroll: self.edit_scroll,
         }
     });
 
     // Get initial data
-    self.get_memos();
+    self.get_scrolls();
     $("#vue-div").show();
 
     return self;
