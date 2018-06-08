@@ -80,9 +80,10 @@ var app = function() {
             })
     };
 
-    self.unfavorite_scroll = function (scroll_id) {
+    self.unfavorite_scroll = function (logged_id, scroll_id) {
         $.post(unfavorite_scroll_url,
             {
+                logged_id: logged_id,
                 scroll_id: scroll_id
             },
             function () {
@@ -91,11 +92,12 @@ var app = function() {
             })
     };
 
-    self.is_favorite = function(scroll_id) {
+    self.is_favorite = function(logged_id, scroll_id) {
         var i;
         var is_fav = false;
         for (i = 0; i < self.vue.favorites_list.length; i++) {
-            if (scroll_id == self.vue.favorites_list[i].scroll_id) {
+            if (logged_id == self.vue.favorites_list[i].logged_id &&
+                scroll_id == self.vue.favorites_list[i].scroll_id) {
                 is_fav = true;
             }
         }

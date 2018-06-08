@@ -35,7 +35,6 @@ def get_scrolls():
                 post = r.post,
                 user_email = r.user_email,
                 is_editing = r.is_editing,
-                is_favorite = r.is_favorite
             )
             scroll_list.append(s)
         else:
@@ -60,6 +59,7 @@ def get_favorites():
     if auth.user is not None:
         for r in db(db.favorites.logged_id == auth.user.id).select():
             favorite = dict(
+                logged_id = r.logged_id,
                 owner_email = r.owner_email,
                 scroll_id = r.scroll_id
             )
@@ -70,14 +70,6 @@ def get_favorites():
 
 @auth.requires_signature()
 def favorite_scroll():
-    scroll_id = int(request.vars.scroll_id)
-    scroll = db.scrolls[scroll_id]
-
-    if scroll.is_favorite == 'False':
-        scroll.update_record(is_favorite = True)
-    else:
-        scroll.update_record(is_favorite = False)
-
     # Add a new favorite scroll
     f_id = db.favorites.insert(
         logged_id = request.vars.logged_id,
@@ -89,17 +81,10 @@ def favorite_scroll():
 
 @auth.requires_signature()
 def unfavorite_scroll():
-    scroll_id = int(request.vars.scroll_id)
-    scroll = db.scrolls[scroll_id]
-
-    if scroll.is_favorite == 'False':
-        scroll.update_record(is_favorite=True)
-    else:
-        scroll.update_record(is_favorite=False)
-
     # Delete a scroll from favorites
     logger.info("Delete scroll_id from favorites: %r", request.vars.scroll_id)
-    db(db.favorites.scroll_id == request.vars.scroll_id).delete()
+    db(db.favorites.scroll_id == request.vars.scroll_id and
+       db.favorites.logged_id == request.vars.logged_id).delete()
     return "ok"
 
 @auth.requires_signature()

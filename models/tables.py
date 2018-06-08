@@ -20,7 +20,6 @@ db.define_table('scrolls',
                 Field('post', 'text'),
                 Field('updated_on', 'datetime', update=datetime.datetime.utcnow()),
                 Field('is_editing', default=False),
-                Field('is_favorite', default=False),
                 )
 db.define_table('favorites',
                 Field('logged_id', 'reference auth_user', default=auth.user_id),
