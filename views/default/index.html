@@ -234,7 +234,7 @@
                                                       <button v-on:click="favorite_scroll(scroll.id, scroll.user_email)"
                                                               :disabled="!logged_in"
                                                               v-bind:class="{'disabled': !logged_in}"
-                                                              v-if="is_favorite(scroll.id) == true">
+                                                              v-if="scroll.is_favorite == 'False'">
                                                         <i class="fa fa-asterisk"></i>
                                                         Add to Favorites
                                                       </button>
