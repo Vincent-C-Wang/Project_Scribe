@@ -6,6 +6,7 @@
 <script>
     var users_url = "{{=URL('api', 'get_users')}}";
     var scrolls_url = "{{=URL('api', 'get_scrolls')}}";
+    var favorites_url = "{{=URL('api', 'get_favorites')}}";
     var favorite_scroll_url = "{{=URL('api', 'favorite_scroll', user_signature=True)}}";
     var unfavorite_scroll_url = "{{=URL('api', 'unfavorite_scroll', user_signature=True)}}";
     var add_scroll_url = "{{=URL('api', 'add_scroll', user_signature=True)}}";
@@ -233,7 +234,7 @@
                                                       <button v-on:click="favorite_scroll(scroll.id, scroll.user_email)"
                                                               :disabled="!logged_in"
                                                               v-bind:class="{'disabled': !logged_in}"
-                                                              v-if="scroll.is_favorite == 'False'">
+                                                              v-if="is_favorite(scroll.id) == true">
                                                         <i class="fa fa-asterisk"></i>
                                                         Add to Favorites
                                                       </button>

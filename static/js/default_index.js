@@ -57,6 +57,16 @@ var app = function() {
             })
     };
 
+    // *** Collect list of all favorites from database. ***
+    self.get_favorites = function(){
+        $.getJSON(
+            favorites_url,
+            function (data) {
+                // Update the local data
+                self.vue.favorites_list = data.favorites_list
+            })
+    };
+
     self.favorite_scroll = function (scroll_id, owner_email) {
         $.post(favorite_scroll_url,
             {
@@ -66,6 +76,7 @@ var app = function() {
             },
             function () {
                 self.get_scrolls();
+                self.get_favorites();
             })
     };
 
@@ -76,7 +87,19 @@ var app = function() {
             },
             function () {
                 self.get_scrolls();
+                self.get_favorites();
             })
+    };
+
+    self.is_favorite = function(scroll_id) {
+        var i;
+        var is_fav = false;
+        for (i = 0; i < self.vue.favorites_list.length; i++) {
+            if (scroll_id == self.vue.favorites_list[i].scroll_id) {
+                is_fav = true;
+            }
+        }
+        return is_fav;
     };
 
     self.add_scroll_button = function () {
@@ -156,6 +179,7 @@ var app = function() {
             logged_id: null,
             users_list: [],
             scroll_list: [],
+            favorites_list: [],
             has_more: false,
             is_adding_scroll: false,
             is_editing_scroll: false,
@@ -164,10 +188,13 @@ var app = function() {
             form_post_add: null,
         },
         methods: {
+            get_users: self.get_users,
             get_scrolls: self.get_scrolls,
+            get_favorites: self.get_favorites,
             get_more: self.get_more,
             favorite_scroll: self.favorite_scroll,
             unfavorite_scroll: self.unfavorite_scroll,
+            is_favorite: self.is_favorite,
             add_scroll_button: self.add_scroll_button,
             add_scroll: self.add_scroll,
             delete_scroll: self.delete_scroll,
@@ -177,7 +204,9 @@ var app = function() {
     });
 
     // Get initial data
+    self.get_users();
     self.get_scrolls();
+    self.get_favorites();
     $("#vue-div").show();
 
     return self;
