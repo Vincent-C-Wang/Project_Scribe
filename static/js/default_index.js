@@ -160,7 +160,7 @@ var app = function() {
             is_adding_scroll: false,
             is_editing_scroll: false,
             form_title_add: null,
-            form_abstract_add: null,
+            form_abstract_add: null, 
             form_post_add: null,
         },
         methods: {
