@@ -156,6 +156,11 @@ img.logo {
     display: block;
     margin-left: auto;
     margin-right: auto;
+    width: 50%;
+}
+
+.side {
+    margin-left: 45px;
 }
 
 /* line 22, ../sass/_tables.scss */

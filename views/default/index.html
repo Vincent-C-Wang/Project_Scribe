@@ -27,8 +27,9 @@
             <h3 class="center">Welcome to Scribe!</h3>
             <p class="center">Here you can read and provide input on pieces of work created by other people and post your own!</p>
             <br>
-            <p class="center">Please log in to proceed!</p>
+            <p class="center">Please <b>LOGIN</b> to proceed!</p>
         </div>
+        <br>
         <div class="center accordion">
           <!-- checkbox here is to keep the state of the accordion
                its id must be unique and referenced by the label -->
@@ -36,7 +37,7 @@
           <label for="x03"><a>About Us</a></label>
           <div>
             <div class="padded white ">
-              Hello! We are four students from UCSC. We wanted to create a platform for users to be able to express themselves
+              <p class="center"> </p>Hello! We are four students from UCSC. We wanted to create a platform for users to be able to express themselves
               in whatever creative form they wish and be able to get input from students and other people alike. We hope you
               enjoy!
             </div>
@@ -48,183 +49,187 @@
         <!-- ***** Show personal memos above other users' memos when logged in ***** -->
         {{if auth.user is not None:}}
 
-        <button class="fa fa-user"></button>
+        <div class="black sidebar">
+            <br>
+            <button class="side center padded fa fa-user"> Profile</button>
+            <button class="side center fa fa-user-plus"> Follows</button>
+            <button class="side center fa fa-star"> Favorites</button>
+        </div>
 
         <div v-if="logged_in" class="my_memos">
-            <h2>My Memos</h2>
-
-            <!-- Button to add a new memo -->
-            <div class="add_btn">
-                <button v-if="!is_adding_memo" class="btn"
-                        v-on:click="add_memo_button()"
-                        :disabled="!logged_in"
-                        v-bind:class="{'disabled': !logged_in}">
-                    <i class="fa fa-plus"></i> Add Memo
+            <div class="container middle max900">
+                <!-- Button to add a new memo -->
+                <button v-if="!is_adding_memo" class="right fa fa-pencil-square"
+                            v-on:click="add_memo_button()"
+                            :disabled="!logged_in"
+                            v-bind:class="{'disabled': !logged_in}">
+                            Scribble
                 </button>
                 <button v-if="is_adding_memo" class="btn "
-                        v-on:click="add_memo_button()">
-                    <i class="fa fa-times"></i> Cancel
+                            v-on:click="add_memo_button()">
+                            <i class="fa fa-times"></i>
+                            Cancel
                 </button>
-            </div>
-
-            <!-- Form to add memos -->
-            <div v-if="is_adding_memo" id="add_memo_div">
-                <form action="#" v-on:submit.prevent="add_memo"
-                      class="form-horizontal"
-                      enctype="multipart/form-data" method="post">
-                    <div class="form-group" id="no_table_title__row">
-                        <div>
-                            <input class="form-control string"
-                                   id="no_table_title"
-                                   v-model="form_title"
-                                   placeholder="Title" name="title" type="text" />
-                            <span class="help-block"></span>
-                        </div>
-                    </div>
-                    <div class="form-group" id="no_table_content__row">
-                        <div>
-                            <input class="form-control string"
-                                   id="no_table_content"
-                                   v-model="form_memo"
-                                   placeholder="Content" name="content" type="text" />
-                            <span class="help-block"></span>
-                        </div>
-                    </div>
-                    <div class="form-group" id="submit_record__row">
-                        <div>
-                            <input class="btn btn-primary" id="add_memo_submit"
-                                   type="submit" value="Submit"/>
-                        </div>
-                    </div>
-                </form>
-            </div>
-
-
-
-            <!-- List out all memos owned by user  -->
-            <div>
-                <ul>
-                    <li v-for="memo in memo_list">
-
-                        <!-- Memo text -->
-                        <div v-if="memo.user_email == '{{=auth.user.email}}'" class="memo">
-                            <div class="memo_text" v-if="memo.is_editing == 'False'">
-                                <div class="memo_title">${memo.title}</div>
-                                <div class="memo_content">${memo.memo}</div>
-                            </div>
-
-                            <!-- Form to edit memos -->
-                            <div v-if="memo.is_editing == 'True'" id="edit_memo_div">
-                                <form action="#" v-on:submit.prevent="edit_memo(memo.id)"
-                                      class="form-horizontal"
-                                      enctype="multipart/form-data" method="post">
-                                    <div class="form-group" id="no_table_title__row">
-                                        <div>
-                                            <input class="form-control string"
-                                                   id="no_table_title"
-                                                   v-model="form_title"
-                                                   placeholder="Title"
-                                                   name="title" type="text" />
-                                            <span class="help-block"></span>
-                                        </div>
-                                    </div>
-                                    <div class="form-group" id="no_table_content__row">
-                                        <div>
-                                            <input class="form-control string"
-                                                   id="no_table_content"
-                                                   v-model="form_memo"
-                                                   placeholder="Content"
-                                                   name="content" type="text" />
-                                            <span class="help-block"></span>
-                                        </div>
-                                    </div>
-                                    <div class="form-group" id="submit_record__row">
-                                        <div>
-                                            <input class="btn btn-primary" id="edit_memo_submit"
-                                                   type="submit" value="Save" />
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-
+                <h2>My Memos</h2>
+                <!-- Form to add memos -->
+                <div v-if="is_adding_memo" id="add_memo_div">
+                    <form action="#" v-on:submit.prevent="add_memo"
+                          class="form-horizontal"
+                          enctype="multipart/form-data" method="post">
+                        <div class="form-group" id="no_table_title__row">
                             <div>
-                                <!-- List of buttons -->
-                                <div class="button_list">
-                                    <div class="buttons">
-
-                                        <!-- Button to delete a memo -->
-                                        <div class="del_btn">
-                                            <button v-on:click="delete_memo(memo.id)"
-                                                    :disabled="!logged_in"
-                                                    v-bind:class="{'disabled': !logged_in}">
-                                                <i class="fa fa-trash fa-lg"></i>
-                                            </button>
-                                        </div>
-
-                                        <!-- Button to toggle whether a memo is public or private -->
-                                        <div class="toggle_btn">
-                                            <button v-if="memo.is_public == 'False'"
-                                                    v-on:click="toggle_public(memo.id)"
-                                                    :disabled="!logged_in"
-                                                    v-bind:class="{'disabled': !logged_in}">
-                                                <i class="fa fa-user"></i>
-                                            </button>
-
-                                            <button v-if="memo.is_public == 'True'"
-                                                    v-on:click="toggle_public(memo.id)">
-                                                <i class="fa fa-users"></i>
-                                            </button>
-                                        </div>
-
-                                        <!-- Button to edit a memo -->
-                                        <div class="edit_btn">
-                                            <button v-if="memo.is_editing == 'False'" class="btn"
-                                                    v-on:click="edit_memo_button(memo.id)"
-                                                    :disabled="!logged_in"
-                                                    v-bind:class="{'disabled': !logged_in}">
-                                                <i class="fa fa-edit fa-lg"></i> Edit Memo
-                                            </button>
-                                            <button v-if="memo.is_editing == 'True'" class="btn"
-                                                    v-on:click="edit_memo_button(memo.id)">
-                                                <i class="fa fa-times"></i> Cancel
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
+                                <input class="form-control string"
+                                       id="no_table_title"
+                                       v-model="form_title"
+                                       placeholder="Title" name="title" type="text" />
+                                <span class="help-block"></span>
                             </div>
                         </div>
-                    </li>
-                </ul>
-            </div>
-            <div v-if="has_more" class="show_more">
-                <button class="btn btn-default rounded" v-on:click="get_more()">
-                    <i class="fa fa-ellipsis-h"></i>
-                    Load more
-                </button>
-            </div>
+                        <div class="form-group" id="no_table_content__row">
+                            <div>
+                                <input class="form-control string"
+                                       id="no_table_content"
+                                       v-model="form_memo"
+                                       placeholder="Content" name="content" type="text" />
+                                <span class="help-block"></span>
+                            </div>
+                        </div>
+                        <div class="form-group" id="submit_record__row">
+                            <div>
+                                <input class="btn btn-primary" id="add_memo_submit"
+                                       type="submit" value="Submit"/>
+                            </div>
+                        </div>
+                    </form>
+                </div>
 
-            <!-- Show all other public memos below personal ones -->
-            <div class="other_memos">
-                <h2>Other User Memos</h2>
+
+
+                <!-- List out all memos owned by user  -->
                 <div>
                     <ul>
                         <li v-for="memo in memo_list">
+
                             <!-- Memo text -->
-                            <div v-if="memo.is_public == 'True'
-                                        && memo.user_email != '{{=auth.user.email}}'"
-                                 class="memo">
-                                <div class="memo_text" v-if="!is_editing_memo">
+                            <div v-if="memo.user_email == '{{=auth.user.email}}'" class="memo">
+                                <div class="memo_text" v-if="memo.is_editing == 'False'">
                                     <div class="memo_title">${memo.title}</div>
                                     <div class="memo_content">${memo.memo}</div>
+                                </div>
+
+                                <!-- Form to edit memos -->
+                                <div v-if="memo.is_editing == 'True'" id="edit_memo_div">
+                                    <form action="#" v-on:submit.prevent="edit_memo(memo.id)"
+                                          class="form-horizontal"
+                                          enctype="multipart/form-data" method="post">
+                                        <div class="form-group" id="no_table_title__row">
+                                            <div>
+                                                <input class="form-control string"
+                                                       id="no_table_title"
+                                                       v-model="form_title"
+                                                       placeholder="Title"
+                                                       name="title" type="text" />
+                                                <span class="help-block"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" id="no_table_content__row">
+                                            <div>
+                                                <input class="form-control string"
+                                                       id="no_table_content"
+                                                       v-model="form_memo"
+                                                       placeholder="Content"
+                                                       name="content" type="text" />
+                                                <span class="help-block"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" id="submit_record__row">
+                                            <div>
+                                                <input class="btn btn-primary" id="edit_memo_submit"
+                                                       type="submit" value="Save" />
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <div>
+                                    <!-- List of buttons -->
+                                    <div class="button_list">
+                                        <div class="buttons">
+
+                                            <!-- Button to delete a memo -->
+                                            <div class="del_btn">
+                                                <button v-on:click="delete_memo(memo.id)"
+                                                        :disabled="!logged_in"
+                                                        v-bind:class="{'disabled': !logged_in}">
+                                                    <i class="fa fa-trash fa-lg"></i>
+                                                </button>
+                                            </div>
+
+                                            <!-- Button to toggle whether a memo is public or private -->
+                                            <div class="toggle_btn">
+                                                <button v-if="memo.is_public == 'False'"
+                                                        v-on:click="toggle_public(memo.id)"
+                                                        :disabled="!logged_in"
+                                                        v-bind:class="{'disabled': !logged_in}">
+                                                    <i class="fa fa-user"></i>
+                                                </button>
+
+                                                <button v-if="memo.is_public == 'True'"
+                                                        v-on:click="toggle_public(memo.id)">
+                                                    <i class="fa fa-users"></i>
+                                                </button>
+                                            </div>
+
+                                            <!-- Button to edit a memo -->
+                                            <div class="edit_btn">
+                                                <button v-if="memo.is_editing == 'False'" class="btn"
+                                                        v-on:click="edit_memo_button(memo.id)"
+                                                        :disabled="!logged_in"
+                                                        v-bind:class="{'disabled': !logged_in}">
+                                                    <i class="fa fa-edit fa-lg"></i> Edit Memo
+                                                </button>
+                                                <button v-if="memo.is_editing == 'True'" class="btn"
+                                                        v-on:click="edit_memo_button(memo.id)">
+                                                    <i class="fa fa-times"></i> Cancel
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </li>
                     </ul>
                 </div>
+                <div v-if="has_more" class="show_more">
+                    <button class="btn btn-default rounded" v-on:click="get_more()">
+                        <i class="fa fa-ellipsis-h"></i>
+                        Load more
+                    </button>
+                </div>
+
+                <!-- Show all other public memos below personal ones -->
+                <div class="other_memos">
+                    <h2>Other User Memos</h2>
+                    <div>
+                        <ul>
+                            <li v-for="memo in memo_list">
+                                <!-- Memo text -->
+                                <div v-if="memo.is_public == 'True'
+                                            && memo.user_email != '{{=auth.user.email}}'"
+                                     class="memo">
+                                    <div class="memo_text" v-if="!is_editing_memo">
+                                        <div class="memo_title">${memo.title}</div>
+                                        <div class="memo_content">${memo.memo}</div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
-        </div>
         {{pass}}
 
+        </div>
     </div>
 </div>
 
