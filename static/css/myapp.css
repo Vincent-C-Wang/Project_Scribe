@@ -144,6 +144,20 @@ div.result_table table td {
   padding: 4px 0.5em 4px 0.5em;
 }
 
+img.logo {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 400px;
+    height: 200px;
+}
+
+.center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 /* line 22, ../sass/_tables.scss */
 div.table_footer {
   display: block;
@@ -152,6 +166,7 @@ div.table_footer {
   text-align: right;
   color: #666;
 }
+
 /* line 28, ../sass/_tables.scss */
 div.table_footer span.pagine {
   color: #777;

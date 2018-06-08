@@ -13,17 +13,14 @@ def get_user_email():
     return auth.user.email if auth.user is not None else None
 
 
-db.define_table('scrolls',
+db.define_table('checklist',
                 Field('user_email', default=get_user_email()),
                 Field('title'),
-                Field('abstract', 'text'),
-                Field('post', 'text'),
+                Field('memo', 'text'),
                 Field('updated_on', 'datetime', update=datetime.datetime.utcnow()),
-                Field('is_editing', default=False),
-                Field('is_favorite', default=False),
+                Field('is_public', default=False),
+                Field('is_editing', default=False)
                 )
-
-db.define_table('')
 
 db.checklist.user_email.writable = False
 db.checklist.user_email.readable = False

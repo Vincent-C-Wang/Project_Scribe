@@ -22,33 +22,33 @@
 
         <!-- ***** Show only public memos when logged off ***** -->
         {{if auth.user is None:}}
-
-        <div class="public_memos">
-            <p>Welcome to the site!</p>
-            <p>Here you can create and organize memos for all sorts of purposes,
-                such as those below, created by other people.</p>
-            Please log in to proceed!
-
-            <h2>Public Memos</h2>
-            <div>
-                <ul>
-                    <li v-for="memo in memo_list">
-                        <!-- Memo text -->
-                        <div v-if="memo.is_public == 'True'" class="memo">
-                            <div class="memo_text">
-                                <div class="memo_title">${memo.title}</div>
-                                <div class="memo_content">${memo.memo}</div>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-            </div>
+        <img class="logo" src="https://i.imgur.com/JwiMl8k.png" alt="Scribe logo">
+        <div>
+            <h3 class="center">Welcome to Scribe!</h3>
+            <p class="center">Here you can read and provide input on pieces of work created by other people and post your own!</p>
+            <br>
+            <p class="center">Please log in to proceed!</p>
         </div>
-        {{pass}}
+        <div class="center accordion">
+          <!-- checkbox here is to keep the state of the accordion
+               its id must be unique and referenced by the label -->
+          <input type="checkbox" id="x03">
+          <label for="x03"><a>About Us</a></label>
+          <div>
+            <div class="padded white ">
+              Hello! We are four students from UCSC. We wanted to create a platform for users to be able to express themselves
+              in whatever creative form they wish and be able to get input from students and other people alike. We hope you
+              enjoy!
+            </div>
+          </div>
+        </div>
 
+        {{pass}}
 
         <!-- ***** Show personal memos above other users' memos when logged in ***** -->
         {{if auth.user is not None:}}
+
+        <button class="fa fa-user"></button>
 
         <div v-if="logged_in" class="my_memos">
             <h2>My Memos</h2>
