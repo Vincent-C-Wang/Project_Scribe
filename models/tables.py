@@ -16,6 +16,7 @@ def get_user_email():
 db.define_table('scrolls',
                 Field('user_email', default=get_user_email()),
                 Field('title'),
+                Field('author'),
                 Field('abstract', 'text'),
                 Field('post', 'text'),
                 Field('updated_on', 'datetime', update=datetime.datetime.utcnow()),

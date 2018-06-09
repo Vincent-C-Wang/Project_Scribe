@@ -31,6 +31,7 @@ def get_scrolls():
             s = dict(
                 id = r.id,
                 title = r.title,
+                author = r.author,
                 abstract = r.abstract,
                 post = r.post,
                 user_email = r.user_email,
@@ -59,6 +60,7 @@ def get_favorites():
     if auth.user is not None:
         for r in db(db.favorites.logged_id == auth.user.id).select():
             favorite = dict(
+                id = r.id,
                 logged_id = r.logged_id,
                 owner_email = r.owner_email,
                 scroll_id = r.scroll_id
@@ -81,10 +83,9 @@ def favorite_scroll():
 
 @auth.requires_signature()
 def unfavorite_scroll():
-    # Delete a scroll from favorites
+    # Delete a scroll from favorites based on current user
     logger.info("Delete scroll_id from favorites: %r", request.vars.scroll_id)
-    db(db.favorites.scroll_id == request.vars.scroll_id and
-       db.favorites.logged_id == request.vars.logged_id).delete()
+    db(db.favorites.id == request.vars.fav_id).delete()
     return "ok"
 
 @auth.requires_signature()
@@ -92,6 +93,7 @@ def add_scroll():
     # Inserts new scroll information
     s_id = db.scrolls.insert(
         title = request.vars.title,
+        author = request.vars.author,
         abstract = request.vars.abstract,
         post = request.vars.post
     )
@@ -125,15 +127,3 @@ def edit_scroll():
         post = request.vars.post
     )
     return response.json(dict(scroll = s))
-
-# @auth.requires_signature()
-# def toggle_public():
-#     memo_id = int(request.vars.memo_id)
-#     m = db.checklist[memo_id]
-#
-#     if m.is_public == 'False':
-#         m.update_record(is_public = True)
-#     else:
-#         m.update_record(is_public = False)
-#
-#     return response.json(dict(checklist=m))

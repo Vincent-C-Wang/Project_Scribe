@@ -81,10 +81,18 @@ var app = function() {
     };
 
     self.unfavorite_scroll = function (logged_id, scroll_id) {
+        var i;
+        var fav_id = null;
+        // Get database ID for the specified scroll under the current user
+        for (i = 0; i < self.vue.favorites_list.length; i++) {
+            if (logged_id == self.vue.favorites_list[i].logged_id &&
+                scroll_id == self.vue.favorites_list[i].scroll_id) {
+                fav_id = self.vue.favorites_list[i].id;
+            }
+        }
         $.post(unfavorite_scroll_url,
             {
-                logged_id: logged_id,
-                scroll_id: scroll_id
+                fav_id: fav_id
             },
             function () {
                 self.get_scrolls();
@@ -113,6 +121,7 @@ var app = function() {
         $.post(add_scroll_url,
             {
                 title: self.vue.form_title_add,
+                author: self.vue.logged_user,
                 abstract: self.vue.form_abstract_add,
                 post: self.vue.form_post_add
             },
@@ -122,6 +131,10 @@ var app = function() {
                 self.add_scroll_button();
                 self.get_scrolls();
                 // enumerate(self.vue.scroll_list);
+
+                self.vue.form_title_add = null;
+                self.vue.form_abstract_add = null;
+                self.vue.form_post_add = null;
             });
     };
 

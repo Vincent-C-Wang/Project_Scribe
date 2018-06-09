@@ -122,6 +122,7 @@
                             <div v-if="scroll.user_email == '{{=auth.user.email}}'" class="memo">
                                 <div class="scroll_text" v-if="scroll.is_editing == 'False'">
                                     <div class="scroll_title">${scroll.title}</div>
+                                    <div class="scroll_author">by ${scroll.author}</div>
                                     <div class="scroll_abstract">${scroll.abstract}</div>
                                     <div class="scroll_content">${scroll.post}</div>
                                 </div>
@@ -198,6 +199,23 @@
                                                     <i class="fa fa-times"></i> Cancel
                                                 </button>
                                             </div>
+                                            <!-- Button to add a scroll as a favorite -->
+                                            <div class="fav_btn">
+                                                <button v-on:click="favorite_scroll(scroll.id, scroll.user_email)"
+                                                        :disabled="!logged_in"
+                                                        v-bind:class="{'disabled': !logged_in}"
+                                                        v-if="is_favorite(logged_id, scroll.id) == false">
+                                                  <i class="fa fa-asterisk"></i>
+                                                  Add to Favorites
+                                                </button>
+                                                <button v-on:click="unfavorite_scroll(logged_id, scroll.id)"
+                                                        :disabled="!logged_in"
+                                                        v-bind:class="{'disabled': !logged_in}"
+                                                        v-if="is_favorite(logged_id, scroll.id) == true">
+                                                  <i class="fa fa-asterisk"></i>
+                                                  Favorited!
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -221,6 +239,7 @@
                               <div v-if="scroll.user_email != '{{=auth.user.email}}'" class="memo">
                                   <div class="scroll_text">
                                       <div class="scroll_title">${scroll.title}</div>
+                                      <div class="scroll_author">by ${scroll.author}</div>
                                       <div class="scroll_abstract">${scroll.abstract}</div>
                                       <div class="scroll_content">${scroll.post}</div>
 
