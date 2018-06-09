@@ -1,27 +1,32 @@
-Here's a general guideline for committing via git: (surrounding dashes indicate commands, square brackets indicate replacement)
+Here's a general guideline for committing via git: (surrounding ~'s indicate commands, square brackets indicate replacement)
 
-0.) Both the remote repo and your local repo need to be sync'd before everything else, so -git fetch- and -git pull origin [remote branch]- to grab the latest stuff from the remote repo.
+0.) Both the remote repo and your local repo need to be sync'd before everything else, so ~git fetch~ and ~git pull origin [remote branch]~ to grab the latest stuff from the remote repo.
 
-1.) Assuming you're on the same branch you've been working on and want to commit changes to, use -git add *-. 
+1.) Assuming you're on the same branch you've been working on and want to commit changes to, use ~git add *~. 
     The following link has other potentially useful variations: 
         https://stackoverflow.com/questions/572549/difference-between-git-add-a-and-git-add
 
-2.) Do -git commit -am "[some message]"- to create the commit.
+2.) Do ~git commit -am "[some message]"~ to create the commit.
 
-3.) Then do -git push- to actually upload the commit to the remote repo.
+3.) Then do ~git push~ to actually upload the commit to the remote repo.
 
 **************************************************************************************************
 
 How to view all local branches for the repository:
-    -git branch-
+    ~git branch~
     
-How to switch to a different branch:
-    -git checkout [branch]-
+How to view all remote branches for the repository: 
+    ~git branch -r~
     
-How to merge branches: (because we'll likely work within our own branches to prevent code conflicts)
-    1.) Make sure you're within the current branch you want to merge changes to. This will likely be the master branch of our project.
-    2.) Use -git merge [your branch]- within the master branch so that all your work gets pushed to the master branch.
-    3.) If merge conflicts arise, we'll deal with them on the spot.
+How to switch to a different branch: (this works for remote branches too)
+    ~git checkout [branch]~
+    
+How to overwrite branches: (because we'll likely work within our own branches to prevent code conflicts)
+    1.) Make sure you're within the current branch you want to merge changes from. This will likely be the branch you've been working in.
+    2.) Do ~git merge -s ours [target branch]~, where the target branch is the one you want to update with changes. 
+    3.) Now ~git checkout [target branch]~.
+    4.) Do ~git merge [original branch]~ to confirm the updates from the original branch you've been working in.
+(Source: https://gist.github.com/ummahusla/8ccfdae6fbbe50171d77)
     
 
 *** For a quick overview of many other useful git commands, see the git_cheat_sheet.pdf that Vincent pinned on the Discord chat.
