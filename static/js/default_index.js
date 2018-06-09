@@ -1,6 +1,29 @@
 // This is the js for the default/index.html view.
+ // attempted binding to a vue prototype to access methods
+
+//var toolbarOptions= [ ];
+
+//var quill =new Quill(‘#editor’,{
+
+//modules: {
+
+//toolbar: toolbarOptions
+
+//},
+
+//theme: ‘snow’
+
+//});
+
 
 var app = function() {
+    import Quill from './quill-1.3.6/quill.js';
+    Object.definePrototype(Vue.prototype, '$quill', { value: quill });
+    /*
+    this.$quill(){
+        var editor = new Quill('.editor');
+    };
+    */
 
     var self = {};
 
