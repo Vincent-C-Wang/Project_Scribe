@@ -8,7 +8,7 @@ Here's a general guideline for committing via git: (surrounding ~'s indicate com
 
 2.) Do ~git commit -am "[some message]"~ to create the commit.
 
-3.) Then do ~git push~ to actually upload the commit to the remote repo.
+3.) Then do ~git push origin [target branch]~ to actually upload the commit to the remote repo you want.
 
 **************************************************************************************************
 
