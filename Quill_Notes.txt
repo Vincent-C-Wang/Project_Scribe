@@ -1,0 +1,18 @@
+Notes on rich text editor implementation so far:
+
+see the import statement in default_index.js to find problem.
+
+import Quill from '/quill-1.3.6/quill.js';//error here Uncaught SyntaxError: Unexpected identifier
+Object.definePrototype(Vue.prototype, '$quill', { value: quill });
+
+
+ideally we want something like
+
+var quill = new Quill('#editor', {
+          theme: 'snow'
+          });
+
+in the vue component so we can call<div id="editor">...</div> to have the editor there.
+The reason why the CDN method doesnt works is that vue 
+has no idea how to handle that when its in the html.
+if we get that import to work then we can move forward with testing it more
