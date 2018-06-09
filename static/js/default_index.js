@@ -17,12 +17,10 @@
 
 
 var app = function() {
-    import Quill from './quill-1.3.6/quill.js';
+    import Quill from '/quill-1.3.6/quill.js';
     Object.definePrototype(Vue.prototype, '$quill', { value: quill });
     /*
-    this.$quill(){
-        var editor = new Quill('.editor');
-    };
+  
     */
 
     var self = {};
