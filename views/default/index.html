@@ -4,7 +4,7 @@
 <script src="{{=URL('static', 'js/vue.js')}}"></script>
 
 <script>
-    var users_url = "{{=URL('api', 'get_users')}}";
+    var profiles_url = "{{=URL('api', 'get_profiles')}}";
     var scrolls_url = "{{=URL('api', 'get_scrolls')}}";
     var favorites_url = "{{=URL('api', 'get_favorites')}}";
     var favorite_scroll_url = "{{=URL('api', 'favorite_scroll', user_signature=True)}}";
@@ -13,6 +13,8 @@
     var del_scroll_url = "{{=URL('api', 'del_scroll', user_signature=True)}}";
     var edit_scroll_button_url = "{{=URL('api', 'edit_scroll_button', user_signature=True)}}";
     var edit_scroll_url = "{{=URL('api', 'edit_scroll', user_signature=True)}}";
+    var view_profile_url = "{{=URL('api', 'view_profile', user_signature=True)}}";
+    var edit_bio_url = "{{=URL('api', 'edit_bio', user_signature=True)}}";
 </script>
 {{end}}
 
@@ -55,7 +57,7 @@
             <button class="side center fa fa-star"> Favorites</button>
         </div>
 
-        <div v-if="logged_in" class="my_scrolls">
+        <div v-if="is_main_page" class="my_scrolls">
             <div class="container middle max900">
                 <!-- Button to add a new scroll -->
                 <button v-if="!is_adding_scroll" class="right fa fa-pencil-square"
@@ -119,10 +121,14 @@
                         <li v-for="scroll in scroll_list">
 
                             <!-- Scroll text -->
-                            <div v-if="scroll.user_email == '{{=auth.user.email}}'" class="memo">
+                            <div v-if="scroll.author_id == '{{=auth.user.id}}'" class="memo">
                                 <div class="scroll_text" v-if="scroll.is_editing == 'False'">
                                     <div class="scroll_title">${scroll.title}</div>
-                                    <div class="scroll_author">by ${scroll.author}</div>
+                                    <div class="scroll_author">
+                                      <button class="author_link" v-on:click="view_profile(scroll.author_id)">
+                                            by ${scroll.author_name}
+                                      </button>
+                                    </div>
                                     <div class="scroll_abstract">${scroll.abstract}</div>
                                     <div class="scroll_content">${scroll.post}</div>
                                 </div>
@@ -201,7 +207,7 @@
                                             </div>
                                             <!-- Button to add a scroll as a favorite -->
                                             <div class="fav_btn">
-                                                <button v-on:click="favorite_scroll(scroll.id, scroll.user_email)"
+                                                <button v-on:click="favorite_scroll(scroll.id, scroll.author_id)"
                                                         :disabled="!logged_in"
                                                         v-bind:class="{'disabled': !logged_in}"
                                                         v-if="is_favorite(logged_id, scroll.id) == false">
@@ -236,10 +242,14 @@
                       <ul>
                           <li v-for="scroll in scroll_list">
                               <!-- Scroll text -->
-                              <div v-if="scroll.user_email != '{{=auth.user.email}}'" class="memo">
+                              <div v-if="scroll.author_id != '{{=auth.user.id}}'" class="memo">
                                   <div class="scroll_text">
                                       <div class="scroll_title">${scroll.title}</div>
-                                      <div class="scroll_author">by ${scroll.author}</div>
+                                      <div class="scroll_author">
+                                          <button class="author_link" v-on:click="view_profile(scroll.author_id)">
+                                            by ${scroll.author_name}
+                                          </button>
+                                      </div>
                                       <div class="scroll_abstract">${scroll.abstract}</div>
                                       <div class="scroll_content">${scroll.post}</div>
 
@@ -250,7 +260,7 @@
 
                                                   <!-- Button to add a scroll as a favorite -->
                                                   <div class="fav_btn">
-                                                      <button v-on:click="favorite_scroll(scroll.id, scroll.user_email)"
+                                                      <button v-on:click="favorite_scroll(scroll.id, scroll.author_id)"
                                                               :disabled="!logged_in"
                                                               v-bind:class="{'disabled': !logged_in}"
                                                               v-if="is_favorite(logged_id, scroll.id) == false">
@@ -275,9 +285,54 @@
                   </div>
               </div>
             </div>
-        {{pass}}
+        </div>
+
+        <!-- Show profile of specified user. -->
+        <div v-if="is_profile_page" class="container middle max900">
+          <button v-on:click="back_to_main()">Back</button>
+          <p><b>Name: </b> ${p_first_name} ${p_last_name}</p>
+          <p><b>Email: </b> ${p_email}</p>
+          <h5>
+            About Me
+
+            <!-- Button to edit user bio -->
+            <button v-if="!is_editing_bio"
+                    v-on:click="edit_bio_button()">
+                <i class="fa fa-edit fa-lg"></i> Edit
+            </button>
+            <button v-if="is_editing_bio"
+                    v-on:click="edit_bio_button()">
+                <i class="fa fa-times"></i> Cancel
+            </button>
+          </h5>
+
+          <p v-if="!is_editing_bio">${p_about_me}</p>
+
+          <!-- Form to edit scrolls -->
+          <div v-if="is_editing_bio">
+              <form action="#" v-on:submit.prevent="edit_bio(p_id)"
+                    class="form-horizontal"
+                    enctype="multipart/form-data" method="post">
+                  <div class="form-group">
+                      <div>
+                          <input class="form-control string"
+                                 v-model="p_about_me"
+                                 name="about_me" type="text" />
+                          <span class="help-block"></span>
+                      </div>
+                  </div>
+                  <div class="form-group" id="submit_record__row">
+                      <div>
+                          <input class="btn btn-primary" id="edit_bio_submit"
+                                 type="submit" value="Save" />
+                      </div>
+                  </div>
+              </form>
+          </div>
 
         </div>
+
+        {{pass}}
     </div>
 </div>
 

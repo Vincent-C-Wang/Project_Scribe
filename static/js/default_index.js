@@ -16,16 +16,6 @@ var app = function() {
     // Enumerates an array.
     var enumerate = function(v) { var k=0; return v.map(function(e) {e._idx = k++;});};
 
-    // *** Collect list of other users from database. ***
-    self.get_users = function(){
-        $.getJSON(
-            users_url,
-            function (data) {
-                // Update the local data
-                self.vue.users_list = data.users_list;
-            })
-    };
-
     function get_scrolls_url(start_idx, end_idx) {
         var pp = {
             start_idx: start_idx,
@@ -67,11 +57,11 @@ var app = function() {
             })
     };
 
-    self.favorite_scroll = function (scroll_id, owner_email) {
+    self.favorite_scroll = function (scroll_id, author_id) {
         $.post(favorite_scroll_url,
             {
                 logged_id: self.vue.logged_id,
-                owner_email: owner_email,
+                owner_id: author_id,
                 scroll_id: scroll_id
             },
             function () {
@@ -121,7 +111,7 @@ var app = function() {
         $.post(add_scroll_url,
             {
                 title: self.vue.form_title_add,
-                author: self.vue.logged_user,
+                author_name: self.vue.logged_user,
                 abstract: self.vue.form_abstract_add,
                 post: self.vue.form_post_add
             },
@@ -183,16 +173,66 @@ var app = function() {
             });
     };
 
+    // *** Collect list of all users from database. ***
+    self.get_profiles = function(){
+        $.getJSON(
+            profiles_url,
+            function (data) {
+                // Update the local data
+                self.vue.profile_list = data.profile_list;
+            })
+    };
+
+    self.view_profile = function(author_id) {
+        self.vue.is_main_page = false;
+        self.vue.is_profile_page = true;
+        self.vue.p_id = self.vue.profile_list[author_id-1].profile_id;
+        self.vue.p_first_name = self.vue.profile_list[author_id-1].first_name;
+        self.vue.p_last_name = self.vue.profile_list[author_id-1].last_name;
+        self.vue.p_email = self.vue.profile_list[author_id-1].author_email;
+        self.vue.p_about_me = self.vue.profile_list[author_id-1].about_me;
+
+        $.post(view_profile_url, {
+            author_id: author_id
+        },
+        function () {});
+    };
+
+     self.edit_bio_button = function () {
+        // The button to edit the "About Me" portion has been pressed.
+        self.vue.is_editing_bio = !self.vue.is_editing_bio;
+    };
+
+    self.edit_bio = function(profile_id) {
+        $.post(edit_bio_url,
+            {
+                profile_id: profile_id,
+                about_me: self.vue.p_about_me
+            },
+            function () {
+                $.web2py.enableElement($("#edit_bio_submit"));
+                self.edit_bio_button();
+                self.get_profiles();
+            });
+    };
+
+    self.back_to_main = function() {
+        self.vue.is_main_page = true;
+        self.vue.is_profile_page = false;
+    };
+
     // ***** Complete as needed. *****
     self.vue = new Vue({
         el: "#vue-div",
         delimiters: ['${', '}'],            //indicates vue object
         unsafeDelimiters: ['!{', '}'],
         data: {
+            is_main_page: true,
+            is_profile_page: false,
             logged_in: false,
             logged_user: null,
             logged_id: null,
-            users_list: [],
+            profile_list: [],
             scroll_list: [],
             favorites_list: [],
             has_more: false,
@@ -201,9 +241,16 @@ var app = function() {
             form_title_add: null,
             form_abstract_add: null, 
             form_post_add: null,
+
+            p_id: null,
+            p_first_name: null,
+            p_last_name: null,
+            p_email: null,
+            p_about_me: null,
+            is_editing_bio: false
         },
         methods: {
-            get_users: self.get_users,
+            get_profiles: self.get_profiles,
             get_scrolls: self.get_scrolls,
             get_favorites: self.get_favorites,
             get_more: self.get_more,
@@ -215,11 +262,16 @@ var app = function() {
             delete_scroll: self.delete_scroll,
             edit_scroll_button: self.edit_scroll_button,
             edit_scroll: self.edit_scroll,
+            view_profile: self.view_profile,
+            back_to_main: self.back_to_main,
+
+            edit_bio_button: self.edit_bio_button,
+            edit_bio: self.edit_bio
         }
     });
 
     // Get initial data
-    self.get_users();
+    self.get_profiles();
     self.get_scrolls();
     self.get_favorites();
     $("#vue-div").show();
