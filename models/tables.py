@@ -32,8 +32,7 @@ db.define_table('profiles',
                 Field('author_email'),
                 Field('author_first_name'),
                 Field('author_last_name'),
-                Field('about_me'),
-                Field('is_viewing', default=False)
+                Field('about_me')
                 )
 
 db.scrolls.updated_on.writable = db.scrolls.updated_on.readable = False

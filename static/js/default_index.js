@@ -183,19 +183,17 @@ var app = function() {
             })
     };
 
+    // Get all profile info from existing list of profiles
     self.view_profile = function(author_id) {
         self.vue.is_main_page = false;
         self.vue.is_profile_page = true;
+
         self.vue.p_id = self.vue.profile_list[author_id-1].profile_id;
+        self.vue.p_author_id = author_id;
         self.vue.p_first_name = self.vue.profile_list[author_id-1].first_name;
         self.vue.p_last_name = self.vue.profile_list[author_id-1].last_name;
         self.vue.p_email = self.vue.profile_list[author_id-1].author_email;
         self.vue.p_about_me = self.vue.profile_list[author_id-1].about_me;
-
-        $.post(view_profile_url, {
-            author_id: author_id
-        },
-        function () {});
     };
 
      self.edit_bio_button = function () {
@@ -216,7 +214,7 @@ var app = function() {
             });
     };
 
-    self.back_to_main = function() {
+    self.back_to_main = function(author_id) {
         self.vue.is_main_page = true;
         self.vue.is_profile_page = false;
     };
@@ -243,6 +241,7 @@ var app = function() {
             form_post_add: null,
 
             p_id: null,
+            p_author_id: null,
             p_first_name: null,
             p_last_name: null,
             p_email: null,

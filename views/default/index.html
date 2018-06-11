@@ -13,7 +13,6 @@
     var del_scroll_url = "{{=URL('api', 'del_scroll', user_signature=True)}}";
     var edit_scroll_button_url = "{{=URL('api', 'edit_scroll_button', user_signature=True)}}";
     var edit_scroll_url = "{{=URL('api', 'edit_scroll', user_signature=True)}}";
-    var view_profile_url = "{{=URL('api', 'view_profile', user_signature=True)}}";
     var edit_bio_url = "{{=URL('api', 'edit_bio', user_signature=True)}}";
 </script>
 {{end}}
@@ -52,7 +51,7 @@
 
         <div class="black sidebar">
             <br>
-            <button class="side center padded fa fa-user"> Profile</button>
+            <button class="side center padded fa fa-user" v-on:click="view_profile(logged_id)"> Profile</button>
             <button class="side center fa fa-user-plus"> Follows</button>
             <button class="side center fa fa-star"> Favorites</button>
         </div>
@@ -296,7 +295,7 @@
             About Me
 
             <!-- Button to edit user bio -->
-            <button v-if="!is_editing_bio"
+            <button v-if="!is_editing_bio && p_author_id == logged_id"
                     v-on:click="edit_bio_button()">
                 <i class="fa fa-edit fa-lg"></i> Edit
             </button>
@@ -330,6 +329,45 @@
               </form>
           </div>
 
+          <h5>My Scribbles</h5>
+          <div><ul>
+              <li v-for="scroll in scroll_list">
+                  <!-- Scroll text -->
+                  <div v-if="scroll.author_id == p_author_id" class="memo">
+                      <div class="scroll_text">
+                          <div class="scroll_title">${scroll.title}</div>
+                          <div class="scroll_abstract">${scroll.abstract}</div>
+                          <div class="scroll_content">${scroll.post}</div>
+
+                          <div>
+                              <!-- List of buttons -->
+                              <div class="button_list">
+                                  <div class="buttons">
+
+                                      <!-- Button to add a scroll as a favorite -->
+                                      <div class="fav_btn">
+                                          <button v-on:click="favorite_scroll(scroll.id, scroll.author_id)"
+                                                  :disabled="!logged_in"
+                                                  v-bind:class="{'disabled': !logged_in}"
+                                                  v-if="is_favorite(logged_id, scroll.id) == false">
+                                            <i class="fa fa-asterisk"></i>
+                                            Add to Favorites
+                                          </button>
+                                          <button v-on:click="unfavorite_scroll(logged_id, scroll.id)"
+                                                  :disabled="!logged_in"
+                                                  v-bind:class="{'disabled': !logged_in}"
+                                                  v-if="is_favorite(logged_id, scroll.id) == true">
+                                            <i class="fa fa-asterisk"></i>
+                                            Favorited!
+                                          </button>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </li>
+              </ul></div>
         </div>
 
         {{pass}}
