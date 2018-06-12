@@ -4,374 +4,498 @@
 <script src="{{=URL('static', 'js/vue.js')}}"></script>
 
 <script>
-    var profiles_url = "{{=URL('api', 'get_profiles')}}";
-    var scrolls_url = "{{=URL('api', 'get_scrolls')}}";
-    var favorites_url = "{{=URL('api', 'get_favorites')}}";
-    var favorite_scroll_url = "{{=URL('api', 'favorite_scroll', user_signature=True)}}";
-    var unfavorite_scroll_url = "{{=URL('api', 'unfavorite_scroll', user_signature=True)}}";
-    var add_scroll_url = "{{=URL('api', 'add_scroll', user_signature=True)}}";
-    var del_scroll_url = "{{=URL('api', 'del_scroll', user_signature=True)}}";
-    var edit_scroll_button_url = "{{=URL('api', 'edit_scroll_button', user_signature=True)}}";
-    var edit_scroll_url = "{{=URL('api', 'edit_scroll', user_signature=True)}}";
-    var edit_bio_url = "{{=URL('api', 'edit_bio', user_signature=True)}}";
+  var profiles_url = "{{=URL('api', 'get_profiles')}}";
+  var scrolls_url = "{{=URL('api', 'get_scrolls')}}";
+  var favorites_url = "{{=URL('api', 'get_favorites')}}";
+  var favorite_scroll_url = "{{=URL('api', 'favorite_scroll', user_signature=True)}}";
+  var unfavorite_scroll_url = "{{=URL('api', 'unfavorite_scroll', user_signature=True)}}";
+  var add_scroll_url = "{{=URL('api', 'add_scroll', user_signature=True)}}";
+  var del_scroll_url = "{{=URL('api', 'del_scroll', user_signature=True)}}";
+  var edit_scroll_button_url = "{{=URL('api', 'edit_scroll_button', user_signature=True)}}";
+  var edit_scroll_url = "{{=URL('api', 'edit_scroll', user_signature=True)}}";
+  var edit_bio_url = "{{=URL('api', 'edit_bio', user_signature=True)}}";
 </script>
 {{end}}
 
 <div class="main_content">
-    <div id="vue-div" v-cloak class="display:none">
+  <div id="vue-div" v-cloak class="display:none">
 
-        <!-- ***** When logged off. ***** -->
-        {{if auth.user is None:}}
-        <img class="logo" src="https://i.imgur.com/JwiMl8k.png" alt="Scribe logo">
-        <div>
-            <h3 class="center">Welcome to Scribe!</h3>
-            <p class="center">Here you can read and provide input on pieces of work created by other people and post your own!</p>
-            <br>
-            <p class="center">Please <b>LOGIN</b> to proceed!</p>
+    <!-- ***** When logged off. ***** -->
+  {{if auth.user is None:}}
+    <img class="logo" src="https://i.imgur.com/JwiMl8k.png" alt="Scribe logo">
+    <div>
+      <h3 class="center">Welcome to Scribe!</h3>
+      <p class="center">Here you can read and provide input on pieces of work created by other people and post your own!</p>
+      <br>
+      <p class="center">Please <b>LOGIN</b> to proceed!</p>
+    </div>
+    <br>
+    <div class="center accordion">
+      <!-- checkbox here is to keep the state of the accordion
+           its id must be unique and referenced by the label -->
+      <input type="checkbox" id="x03">
+      <label for="x03"><a>About Us</a></label>
+      <div>
+        <div class="padded white ">
+          <p class="center"> </p>Hello! We are four students from UCSC. We wanted to create a platform for users to be able to express themselves
+          in whatever creative form they wish and be able to get input from students and other people alike. We hope you
+          enjoy!
         </div>
-        <br>
-        <div class="center accordion">
-          <!-- checkbox here is to keep the state of the accordion
-               its id must be unique and referenced by the label -->
-          <input type="checkbox" id="x03">
-          <label for="x03"><a>About Us</a></label>
-          <div>
-            <div class="padded white ">
-              <p class="center"> </p>Hello! We are four students from UCSC. We wanted to create a platform for users to be able to express themselves
-              in whatever creative form they wish and be able to get input from students and other people alike. We hope you
-              enjoy!
-            </div>
-          </div>
-        </div>
+      </div>
+    </div>
 
-        {{pass}}
+  {{pass}}
 
-        <!-- ***** When logged in. ***** -->
-        {{if auth.user is not None:}}
+    <!-- ******************************************************************************* -->
+    <!-- ******************************************************************************* -->
+    <!-- ***** When logged in. ***** -->
+  {{if auth.user is not None:}}
 
-        <div class="black sidebar">
-            <br>
-            <button class="side center padded fa fa-user" v-on:click="view_profile(logged_id)"> Profile</button>
-            <button class="side center fa fa-user-plus"> Follows</button>
-            <button class="side center fa fa-star"> Favorites</button>
-        </div>
+    <div class="black sidebar">
+      <br>
+      <button class="side center padded fa fa-user" v-on:click="view_profile(logged_id)">
+        Profile
+      </button>
+      <button class="side center fa fa-user-plus">
+        Follows
+      </button>
+      <button class="side center fa fa-star" v-on:click="view_user_favs(logged_id)">
+        Favorites
+      </button>
+    </div>
 
-        <div v-if="is_main_page" class="my_scrolls">
-            <div class="container middle max900">
-                <!-- Button to add a new scroll -->
-                <button v-if="!is_adding_scroll" class="right fa fa-pencil-square"
-                            v-on:click="add_scroll_button()"
-                            :disabled="!logged_in"
-                            v-bind:class="{'disabled': !logged_in}">
-                            Scribble
-                </button>
+    <div v-if="is_main_page" class="my_scrolls">
+      <div class="container middle max900">
+        <!-- Button to add a new scroll -->
+        <button v-if="!is_adding_scroll" class="right fa fa-pencil-square"
+                v-on:click="add_scroll_button()"
+                :disabled="!logged_in"
+                v-bind:class="{'disabled': !logged_in}">
+          Scribble
+        </button>
 
-                <h2>My Scribbles</h2>
-                <!-- Form to add scrolls -->
-                <div v-if="is_adding_scroll" id="add_scroll_div">
-                    <form action="#" v-on:submit.prevent="add_scroll"
-                          class="form-horizontal"
-                          enctype="multipart/form-data" method="post">
-                        <div class="form-group" id="no_table_title__row">
-                            <div>
-                                <input class="form-control string"
-                                       id="no_table_title"
-                                       v-model="form_title_add"
-                                       placeholder="Title" name="title" type="text" />
-                                <span class="help-block"></span>
-                            </div>
-                        </div>
-                        <div class="form-group" id="no_table_abstract__row">
-                            <div>
-                                <input class="form-control string"
-                                       id="no_table_abstract"
-                                       v-model="form_abstract_add"
-                                       placeholder="Abstract" name="abstract" type="text" />
-                                <span class="help-block"></span>
-                            </div>
-                        </div>
-                        <div class="form-group" id="no_table_content__row">
-                            <div>
-                                <input class="form-control string"
-                                       id="no_table_content"
-                                       v-model="form_post_add"
-                                       placeholder="Content" name="content" type="text" />
-                                <span class="help-block"></span>
-                            </div>
-                        </div>
-                        <div class="form-group" id="submit_record__row">
-                            <div>
-                                <input class="btn btn-primary" id="add_scroll_submit"
-                                       type="submit" value="Submit"/>
-                                <button v-if="is_adding_scroll" class="btn "
-                                        v-on:click="add_scroll_button()">
-                                        <i class="fa fa-times"></i>
-                                        Cancel
-                                </button>
-                            </div>
-
-                        </div>
-                    </form>
-                </div>
-
-                <!-- List out all scrolls owned by user  -->
-                <div>
-                    <ul>
-                        <li v-for="scroll in scroll_list">
-
-                            <!-- Scroll text -->
-                            <div v-if="scroll.author_id == '{{=auth.user.id}}'" class="memo">
-                                <div class="scroll_text" v-if="scroll.is_editing == 'False'">
-                                    <div class="scroll_title">${scroll.title}</div>
-                                    <div class="scroll_author">
-                                      <button class="author_link" v-on:click="view_profile(scroll.author_id)">
-                                            by ${scroll.author_name}
-                                      </button>
-                                    </div>
-                                    <div class="scroll_abstract">${scroll.abstract}</div>
-                                    <div class="scroll_content">${scroll.post}</div>
-                                </div>
-
-                                <!-- Form to edit scrolls -->
-                                <div v-if="scroll.is_editing == 'True'" id="edit_scroll_div">
-                                    <form action="#" v-on:submit.prevent="edit_scroll(scroll.id, scroll.title,
-                                                                            scroll.abstract, scroll.post)"
-                                          class="form-horizontal"
-                                          enctype="multipart/form-data" method="post">
-                                        <div class="form-group" id="no_table_title__row">
-                                            <div>
-                                                <input class="form-control string"
-                                                       id="no_table_title"
-                                                       v-model="scroll.title"
-                                                       placeholder="Title"
-                                                       name="title" type="text" />
-                                                <span class="help-block"></span>
-                                            </div>
-                                        </div>
-                                        <div class="form-group" id="no_table_abstract__row">
-                                            <div>
-                                                <input class="form-control string"
-                                                       id="no_table_abstract"
-                                                       v-model="scroll.abstract"
-                                                       placeholder="Abstract"
-                                                       name="abstract" type="text" />
-                                                <span class="help-block"></span>
-                                            </div>
-                                        </div>
-                                        <div class="form-group" id="no_table_content__row">
-                                            <div>
-                                                <input class="form-control string"
-                                                       id="no_table_content"
-                                                       v-model="scroll.post"
-                                                       placeholder="Content"
-                                                       name="content" type="text" />
-                                                <span class="help-block"></span>
-                                            </div>
-                                        </div>
-                                        <div class="form-group" id="submit_record__row">
-                                            <div>
-                                                <input class="btn btn-primary" id="edit_scroll_submit"
-                                                       type="submit" value="Save" />
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-
-                                <div>
-                                    <!-- List of buttons -->
-                                    <div class="button_list">
-                                        <div class="buttons">
-
-                                            <!-- Button to delete a scroll -->
-                                            <div class="del_btn">
-                                                <button v-on:click="delete_scroll(scroll.id)"
-                                                        :disabled="!logged_in"
-                                                        v-bind:class="{'disabled': !logged_in}">
-                                                    <i class="fa fa-trash fa-lg"></i>
-                                                </button>
-                                            </div>
-
-                                            <!-- Button to edit a scroll -->
-                                            <div class="edit_btn">
-                                                <button v-if="scroll.is_editing == 'False'" class="btn"
-                                                        v-on:click="edit_scroll_button(scroll.id)"
-                                                        :disabled="!logged_in"
-                                                        v-bind:class="{'disabled': !logged_in}">
-                                                    <i class="fa fa-edit fa-lg"></i> Edit Scribble
-                                                </button>
-                                                <button v-if="scroll.is_editing == 'True'" class="btn"
-                                                        v-on:click="edit_scroll_button(scroll.id)">
-                                                    <i class="fa fa-times"></i> Cancel
-                                                </button>
-                                            </div>
-                                            <!-- Button to add a scroll as a favorite -->
-                                            <div class="fav_btn">
-                                                <button v-on:click="favorite_scroll(scroll.id, scroll.author_id)"
-                                                        :disabled="!logged_in"
-                                                        v-bind:class="{'disabled': !logged_in}"
-                                                        v-if="is_favorite(logged_id, scroll.id) == false">
-                                                  <i class="fa fa-asterisk"></i>
-                                                  Add to Favorites
-                                                </button>
-                                                <button v-on:click="unfavorite_scroll(logged_id, scroll.id)"
-                                                        :disabled="!logged_in"
-                                                        v-bind:class="{'disabled': !logged_in}"
-                                                        v-if="is_favorite(logged_id, scroll.id) == true">
-                                                  <i class="fa fa-asterisk"></i>
-                                                  Favorited!
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-                <div v-if="has_more" class="show_more">
-                    <button class="btn btn-default rounded" v-on:click="get_more()">
-                        <i class="fa fa-ellipsis-h"></i>
-                        Load more
-                    </button>
-                </div>
-              <!-- Show all other public memos below personal ones -->
-              <div class="other_scrolls">
-                  <h2>Other User Scribbles</h2>
-                  <div>
-                      <ul>
-                          <li v-for="scroll in scroll_list">
-                              <!-- Scroll text -->
-                              <div v-if="scroll.author_id != '{{=auth.user.id}}'" class="memo">
-                                  <div class="scroll_text">
-                                      <div class="scroll_title">${scroll.title}</div>
-                                      <div class="scroll_author">
-                                          <button class="author_link" v-on:click="view_profile(scroll.author_id)">
-                                            by ${scroll.author_name}
-                                          </button>
-                                      </div>
-                                      <div class="scroll_abstract">${scroll.abstract}</div>
-                                      <div class="scroll_content">${scroll.post}</div>
-
-                                      <div>
-                                          <!-- List of buttons -->
-                                          <div class="button_list">
-                                              <div class="buttons">
-
-                                                  <!-- Button to add a scroll as a favorite -->
-                                                  <div class="fav_btn">
-                                                      <button v-on:click="favorite_scroll(scroll.id, scroll.author_id)"
-                                                              :disabled="!logged_in"
-                                                              v-bind:class="{'disabled': !logged_in}"
-                                                              v-if="is_favorite(logged_id, scroll.id) == false">
-                                                        <i class="fa fa-asterisk"></i>
-                                                        Add to Favorites
-                                                      </button>
-                                                      <button v-on:click="unfavorite_scroll(logged_id, scroll.id)"
-                                                              :disabled="!logged_in"
-                                                              v-bind:class="{'disabled': !logged_in}"
-                                                              v-if="is_favorite(logged_id, scroll.id) == true">
-                                                        <i class="fa fa-asterisk"></i>
-                                                        Favorited!
-                                                      </button>
-                                                  </div>
-                                              </div>
-                                          </div>
-                                      </div>
-                                  </div>
-                              </div>
-                          </li>
-                      </ul>
-                  </div>
+        <h2>My Scribbles</h2>
+        <!-- Form to add scrolls -->
+        <div v-if="is_adding_scroll" id="add_scroll_div">
+          <form action="#" v-on:submit.prevent="add_scroll"
+                class="form-horizontal"
+                enctype="multipart/form-data" method="post">
+            <div class="form-group" id="no_table_title__row">
+              <div>
+                <input class="form-control string"
+                       id="no_table_title"
+                       v-model="form_title_add"
+                       placeholder="Title" name="title" type="text" />
+                <span class="help-block"></span>
               </div>
             </div>
+            <div class="form-group" id="no_table_abstract__row">
+              <div>
+                <input class="form-control string"
+                       id="no_table_abstract"
+                       v-model="form_abstract_add"
+                       placeholder="Abstract" name="abstract" type="text" />
+                <span class="help-block"></span>
+              </div>
+            </div>
+            <div class="form-group" id="no_table_content__row">
+              <div>
+                <input class="form-control string"
+                       id="no_table_content"
+                       v-model="form_post_add"
+                       placeholder="Content" name="content" type="text" />
+                <span class="help-block"></span>
+              </div>
+            </div>
+            <div class="form-group" id="submit_record__row">
+              <div>
+                <input class="btn btn-primary" id="add_scroll_submit"
+                       type="submit" value="Submit"/>
+                <button v-if="is_adding_scroll" class="btn "
+                        v-on:click="add_scroll_button()">
+                  <i class="fa fa-times"></i>
+                  Cancel
+                </button>
+              </div>
+
+            </div>
+          </form>
         </div>
 
-        <!-- Show profile of specified user. -->
-        <div v-if="is_profile_page" class="container middle max900">
-          <button v-on:click="back_to_main()">Back</button>
-          <p><b>Name: </b> ${p_first_name} ${p_last_name}</p>
-          <p><b>Email: </b> ${p_email}</p>
-          <h5>
-            About Me
+        <!-- List out all scrolls owned by user  -->
+        <div>
+          <ul>
+            <li v-for="scroll in scroll_list">
 
-            <!-- Button to edit user bio -->
-            <button v-if="!is_editing_bio && p_author_id == logged_id"
-                    v-on:click="edit_bio_button()">
-                <i class="fa fa-edit fa-lg"></i> Edit
-            </button>
-            <button v-if="is_editing_bio"
-                    v-on:click="edit_bio_button()">
-                <i class="fa fa-times"></i> Cancel
-            </button>
-          </h5>
+              <!-- Scroll text -->
+              <div v-if="scroll.author_id == '{{=auth.user.id}}'" class="memo">
+                <div class="scroll_text" v-if="scroll.is_editing == 'False'">
+                  <div class="scroll_title">${scroll.title}</div>
+                  <div class="scroll_author">
+                    <button class="author_link" v-on:click="view_profile(scroll.author_id)">
+                      by ${scroll.author_name}
+                    </button>
+                  </div>
+                  <div class="scroll_abstract">${scroll.abstract}</div>
+                  <div class="scroll_content">${scroll.post}</div>
+                </div>
 
-          <p v-if="!is_editing_bio">${p_about_me}</p>
+                <!-- Form to edit scrolls -->
+                <div v-if="scroll.is_editing == 'True'" id="edit_scroll_div">
+                  <form action="#" v-on:submit.prevent="edit_scroll(scroll.id, scroll.title,
+                                                                            scroll.abstract, scroll.post)"
+                        class="form-horizontal"
+                        enctype="multipart/form-data" method="post">
+                    <div class="form-group" id="no_table_title__row">
+                      <div>
+                        <input class="form-control string"
+                               id="no_table_title"
+                               v-model="scroll.title"
+                               placeholder="Title"
+                               name="title" type="text" />
+                        <span class="help-block"></span>
+                      </div>
+                    </div>
+                    <div class="form-group" id="no_table_abstract__row">
+                      <div>
+                        <input class="form-control string"
+                               id="no_table_abstract"
+                               v-model="scroll.abstract"
+                               placeholder="Abstract"
+                               name="abstract" type="text" />
+                        <span class="help-block"></span>
+                      </div>
+                    </div>
+                    <div class="form-group" id="no_table_content__row">
+                      <div>
+                        <input class="form-control string"
+                               id="no_table_content"
+                               v-model="scroll.post"
+                               placeholder="Content"
+                               name="content" type="text" />
+                        <span class="help-block"></span>
+                      </div>
+                    </div>
+                    <div class="form-group" id="submit_record__row">
+                      <div>
+                        <input class="btn btn-primary" id="edit_scroll_submit"
+                               type="submit" value="Save" />
+                      </div>
+                    </div>
+                  </form>
+                </div>
 
-          <!-- Form to edit scrolls -->
-          <div v-if="is_editing_bio">
-              <form action="#" v-on:submit.prevent="edit_bio(p_id)"
+                <div>
+                  <!-- List of buttons -->
+                  <div class="button_list">
+                    <div class="buttons">
+
+                      <!-- Button to delete a scroll -->
+                      <div class="del_btn">
+                        <button v-on:click="delete_scroll(scroll.id)"
+                                :disabled="!logged_in"
+                                v-bind:class="{'disabled': !logged_in}">
+                          <i class="fa fa-trash fa-lg"></i>
+                        </button>
+                      </div>
+
+                      <!-- Button to edit a scroll -->
+                      <div class="edit_btn">
+                        <button v-if="scroll.is_editing == 'False'" class="btn"
+                                v-on:click="edit_scroll_button(scroll.id)"
+                                :disabled="!logged_in"
+                                v-bind:class="{'disabled': !logged_in}">
+                          <i class="fa fa-edit fa-lg"></i> Edit Scribble
+                        </button>
+                        <button v-if="scroll.is_editing == 'True'" class="btn"
+                                v-on:click="edit_scroll_button(scroll.id)">
+                          <i class="fa fa-times"></i> Cancel
+                        </button>
+                      </div>
+                      <!-- Button to add a scroll as a favorite -->
+                      <div class="fav_btn">
+                        <button v-on:click="favorite_scroll(scroll.id, scroll.author_id)"
+                                :disabled="!logged_in"
+                                v-bind:class="{'disabled': !logged_in}"
+                                v-if="is_favorite(logged_id, scroll.id) == false">
+                          <i class="fa fa-asterisk"></i>
+                          Add to Favorites
+                        </button>
+                        <button v-on:click="unfavorite_scroll(logged_id, scroll.id)"
+                                :disabled="!logged_in"
+                                v-bind:class="{'disabled': !logged_in}"
+                                v-if="is_favorite(logged_id, scroll.id) == true">
+                          <i class="fa fa-asterisk"></i>
+                          Favorited!
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div v-if="has_more" class="show_more">
+          <button class="btn btn-default rounded" v-on:click="get_more()">
+            <i class="fa fa-ellipsis-h"></i>
+            Load more
+          </button>
+        </div>
+        <!-- Show all other public memos below personal ones -->
+        <div class="other_scrolls">
+          <h2>Other User Scribbles</h2>
+          <div>
+            <ul>
+              <li v-for="scroll in scroll_list">
+                <!-- Scroll text -->
+                <div v-if="scroll.author_id != '{{=auth.user.id}}'" class="memo">
+                  <div class="scroll_text">
+                    <div class="scroll_title">${scroll.title}</div>
+                    <div class="scroll_author">
+                      <button class="author_link" v-on:click="view_profile(scroll.author_id)">
+                        by ${scroll.author_name}
+                      </button>
+                    </div>
+                    <div class="scroll_abstract">${scroll.abstract}</div>
+                    <div class="scroll_content">${scroll.post}</div>
+
+                    <div>
+                      <!-- List of buttons -->
+                      <div class="button_list">
+                        <div class="buttons">
+
+                          <!-- Button to add a scroll as a favorite -->
+                          <div class="fav_btn">
+                            <button v-on:click="favorite_scroll(scroll.id, scroll.author_id)"
+                                    :disabled="!logged_in"
+                                    v-bind:class="{'disabled': !logged_in}"
+                                    v-if="is_favorite(logged_id, scroll.id) == false">
+                              <i class="fa fa-asterisk"></i>
+                              Add to Favorites
+                            </button>
+                            <button v-on:click="unfavorite_scroll(logged_id, scroll.id)"
+                                    :disabled="!logged_in"
+                                    v-bind:class="{'disabled': !logged_in}"
+                                    v-if="is_favorite(logged_id, scroll.id) == true">
+                              <i class="fa fa-asterisk"></i>
+                              Favorited!
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ******************************************************************************* -->
+    <!-- ******************************************************************************* -->
+    <!-- Show profile of specified user. -->
+    <div v-if="is_profile_page" class="container middle max900">
+      <button v-on:click="back_to_main()">Back</button>
+      <p><b>Name: </b> ${first_name} ${last_name}</p>
+      <p><b>Email: </b> ${email}</p>
+      <h5>
+        About Me
+
+        <!-- Button to edit user bio -->
+        <button v-if="!is_editing_bio && author_id == logged_id"
+                v-on:click="edit_bio_button()">
+          <i class="fa fa-edit fa-lg"></i> Edit
+        </button>
+        <button v-if="is_editing_bio"
+                v-on:click="edit_bio_button()">
+          <i class="fa fa-times"></i> Cancel
+        </button>
+      </h5>
+
+      <p v-if="!is_editing_bio">${about_me}</p>
+
+      <!-- Form to edit the bio -->
+      <div v-if="is_editing_bio">
+        <form action="#" v-on:submit.prevent="edit_bio(id)"
+              class="form-horizontal"
+              enctype="multipart/form-data" method="post">
+          <div class="form-group">
+            <div>
+              <input class="form-control string"
+                     v-model="about_me"
+                     name="about_me" type="text" />
+              <span class="help-block"></span>
+            </div>
+          </div>
+          <div class="form-group" id="submit_record__row">
+            <div>
+              <input class="btn btn-primary" id="edit_bio_submit"
+                     type="submit" value="Save" />
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <h5>My Scribbles</h5>
+      <div><ul>
+        <li v-for="scroll in scroll_list">
+          <!-- Scroll text -->
+          <div v-if="scroll.author_id == author_id" class="memo">
+            <div class="scroll_text" v-if="scroll.is_editing == 'False'">
+              <div class="scroll_title">${scroll.title}</div>
+              <div class="scroll_abstract">${scroll.abstract}</div>
+              <div class="scroll_content">${scroll.post}</div>
+            </div>
+
+            <!-- Form to edit scrolls -->
+            <div v-if="scroll.is_editing == 'True'" id="edit_scroll_div">
+              <form action="#" v-on:submit.prevent="edit_scroll(scroll.id, scroll.title,
+                                                                        scroll.abstract, scroll.post)"
                     class="form-horizontal"
                     enctype="multipart/form-data" method="post">
-                  <div class="form-group">
-                      <div>
-                          <input class="form-control string"
-                                 v-model="p_about_me"
-                                 name="about_me" type="text" />
-                          <span class="help-block"></span>
-                      </div>
+                <div class="form-group" id="no_table_title__row">
+                  <div>
+                    <input class="form-control string"
+                           id="no_table_title"
+                           v-model="scroll.title"
+                           placeholder="Title"
+                           name="title" type="text" />
+                    <span class="help-block"></span>
                   </div>
-                  <div class="form-group" id="submit_record__row">
-                      <div>
-                          <input class="btn btn-primary" id="edit_bio_submit"
-                                 type="submit" value="Save" />
-                      </div>
+                </div>
+                <div class="form-group" id="no_table_abstract__row">
+                  <div>
+                    <input class="form-control string"
+                           id="no_table_abstract"
+                           v-model="scroll.abstract"
+                           placeholder="Abstract"
+                           name="abstract" type="text" />
+                    <span class="help-block"></span>
                   </div>
+                </div>
+                <div class="form-group" id="no_table_content__row">
+                  <div>
+                    <input class="form-control string"
+                           id="no_table_content"
+                           v-model="scroll.post"
+                           placeholder="Content"
+                           name="content" type="text" />
+                    <span class="help-block"></span>
+                  </div>
+                </div>
+                <div class="form-group" id="submit_record__row">
+                  <div>
+                    <input class="btn btn-primary" id="edit_scroll_submit"
+                           type="submit" value="Save" />
+                  </div>
+                </div>
               </form>
-          </div>
+            </div>
 
-          <h5>My Scribbles</h5>
-          <div><ul>
-              <li v-for="scroll in scroll_list">
-                  <!-- Scroll text -->
-                  <div v-if="scroll.author_id == p_author_id" class="memo">
-                      <div class="scroll_text">
-                          <div class="scroll_title">${scroll.title}</div>
-                          <div class="scroll_abstract">${scroll.abstract}</div>
-                          <div class="scroll_content">${scroll.post}</div>
+            <div>
+              <!-- List of buttons -->
+              <div class="button_list">
+                <div class="buttons">
 
-                          <div>
-                              <!-- List of buttons -->
-                              <div class="button_list">
-                                  <div class="buttons">
-
-                                      <!-- Button to add a scroll as a favorite -->
-                                      <div class="fav_btn">
-                                          <button v-on:click="favorite_scroll(scroll.id, scroll.author_id)"
-                                                  :disabled="!logged_in"
-                                                  v-bind:class="{'disabled': !logged_in}"
-                                                  v-if="is_favorite(logged_id, scroll.id) == false">
-                                            <i class="fa fa-asterisk"></i>
-                                            Add to Favorites
-                                          </button>
-                                          <button v-on:click="unfavorite_scroll(logged_id, scroll.id)"
-                                                  :disabled="!logged_in"
-                                                  v-bind:class="{'disabled': !logged_in}"
-                                                  v-if="is_favorite(logged_id, scroll.id) == true">
-                                            <i class="fa fa-asterisk"></i>
-                                            Favorited!
-                                          </button>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
+                  <!-- Button to delete a scroll -->
+                  <div class="del_btn" v-if="author_id == logged_id">
+                    <button v-on:click="delete_scroll(scroll.id)"
+                            :disabled="!logged_in"
+                            v-bind:class="{'disabled': !logged_in}">
+                      <i class="fa fa-trash fa-lg"></i>
+                    </button>
                   </div>
-              </li>
-              </ul></div>
-        </div>
 
-        {{pass}}
+                  <!-- Button to edit a scroll -->
+                  <div class="edit_btn" v-if="author_id == logged_id">
+                    <button v-if="scroll.is_editing == 'False'" class="btn"
+                            v-on:click="edit_scroll_button(scroll.id)"
+                            :disabled="!logged_in"
+                            v-bind:class="{'disabled': !logged_in}">
+                      <i class="fa fa-edit fa-lg"></i> Edit Scribble
+                    </button>
+                    <button v-if="scroll.is_editing == 'True'" class="btn"
+                            v-on:click="edit_scroll_button(scroll.id)">
+                      <i class="fa fa-times"></i> Cancel
+                    </button>
+                  </div>
+
+                  <!-- Button to add a scroll as a favorite -->
+                  <div class="fav_btn">
+                    <button v-on:click="favorite_scroll(scroll.id, scroll.author_id)"
+                            :disabled="!logged_in"
+                            v-bind:class="{'disabled': !logged_in}"
+                            v-if="is_favorite(logged_id, scroll.id) == false">
+                      <i class="fa fa-asterisk"></i>
+                      Add to Favorites
+                    </button>
+                    <button v-on:click="unfavorite_scroll(logged_id, scroll.id)"
+                            :disabled="!logged_in"
+                            v-bind:class="{'disabled': !logged_in}"
+                            v-if="is_favorite(logged_id, scroll.id) == true">
+                      <i class="fa fa-asterisk"></i>
+                      Favorited!
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </li>
+      </ul></div>
     </div>
+
+    <!-- ******************************************************************************* -->
+    <!-- ******************************************************************************* -->
+    <!-- Show list of favorite scribbles for specified user. -->
+    <div v-if="is_favs_page" class="container middle max900">
+      <button v-on:click="back_to_main()">Back</button>
+
+      <h5>My Favorites</h5>
+      <div><ul>
+        <li v-for="fav in user_favorites">
+          <!-- Scroll text -->
+          <div class="memo">
+            <div class="scroll_text">
+              <div class="scroll_title">${fav.title}</div>
+              <div class="scroll_author">
+                <button class="author_link" v-on:click="view_profile(fav.author_id)">
+                  by ${fav.author_name}
+                </button>
+              </div>
+              <div class="scroll_abstract">${fav.abstract}</div>
+              <div class="scroll_content">${fav.post}</div>
+
+              <div>
+                <!-- List of buttons -->
+                <div class="button_list">
+                  <div class="buttons">
+
+                    <!-- Button to unfavorite -->
+                    <div class="fav_btn">
+                      <button v-on:click="unfavorite_scroll(logged_id, fav.s_id)"
+                              :disabled="!logged_in"
+                              v-bind:class="{'disabled': !logged_in}"
+                              v-if="is_favorite(logged_id, fav.s_id) == true">
+                        <i class="fa fa-asterisk"></i>
+                        Unfavorited
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+      </ul></div>
+    </div>
+
+  {{pass}}
+  </div>
 </div>
 
 <script src="{{=URL('static', 'js/default_index.js')}}"></script>

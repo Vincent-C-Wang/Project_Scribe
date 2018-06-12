@@ -57,6 +57,35 @@ var app = function() {
             })
     };
 
+    // Switch to page displaying specified user's favorites
+    self.view_user_favs = function(user_id) {
+        self.vue.is_main_page = false;
+        self.vue.is_favs_page = true;
+        self.vue.is_profile_page = false;
+
+        var all_favs = self.vue.favorites_list;
+        var scrls = self.vue.scroll_list;
+        self.vue.user_favorites = [];       //reinitialize list
+
+        var i, j;
+        for (i = 0; i < all_favs.length; i++) {
+            for (j = 0; j < scrls.length; j++) {
+                if (all_favs[i].scroll_id == scrls[j].id && all_favs[i].logged_id == user_id) {
+                    self.vue.user_favorites.push(
+                        {
+                            s_id: scrls[j].id,
+                            author_id: scrls[j].author_id,
+                            author_name: scrls[j].author_name,
+                            title: scrls[j].title,
+                            abstract: scrls[j].abstract,
+                            post: scrls[j].post,
+                        }
+                    );
+                }
+            }
+        }
+    };
+
     self.favorite_scroll = function (scroll_id, author_id) {
         $.post(favorite_scroll_url,
             {
@@ -186,14 +215,15 @@ var app = function() {
     // Get all profile info from existing list of profiles
     self.view_profile = function(author_id) {
         self.vue.is_main_page = false;
+        self.vue.is_favs_page = false;
         self.vue.is_profile_page = true;
 
-        self.vue.p_id = self.vue.profile_list[author_id-1].profile_id;
-        self.vue.p_author_id = author_id;
-        self.vue.p_first_name = self.vue.profile_list[author_id-1].first_name;
-        self.vue.p_last_name = self.vue.profile_list[author_id-1].last_name;
-        self.vue.p_email = self.vue.profile_list[author_id-1].author_email;
-        self.vue.p_about_me = self.vue.profile_list[author_id-1].about_me;
+        self.vue.id = self.vue.profile_list[author_id-1].profile_id;
+        self.vue.author_id = author_id;
+        self.vue.first_name = self.vue.profile_list[author_id-1].first_name;
+        self.vue.last_name = self.vue.profile_list[author_id-1].last_name;
+        self.vue.email = self.vue.profile_list[author_id-1].author_email;
+        self.vue.about_me = self.vue.profile_list[author_id-1].about_me;
     };
 
      self.edit_bio_button = function () {
@@ -205,7 +235,7 @@ var app = function() {
         $.post(edit_bio_url,
             {
                 profile_id: profile_id,
-                about_me: self.vue.p_about_me
+                about_me: self.vue.about_me
             },
             function () {
                 $.web2py.enableElement($("#edit_bio_submit"));
@@ -217,6 +247,7 @@ var app = function() {
     self.back_to_main = function(author_id) {
         self.vue.is_main_page = true;
         self.vue.is_profile_page = false;
+        self.vue.is_favs_page = false;
     };
 
     // ***** Complete as needed. *****
@@ -227,12 +258,16 @@ var app = function() {
         data: {
             is_main_page: true,
             is_profile_page: false,
+            is_favs_page: false,
             logged_in: false,
             logged_user: null,
             logged_id: null,
+
             profile_list: [],
             scroll_list: [],
             favorites_list: [],
+            user_favorites: [],
+
             has_more: false,
             is_adding_scroll: false,
             is_editing_scroll: false,
@@ -240,32 +275,36 @@ var app = function() {
             form_abstract_add: null, 
             form_post_add: null,
 
-            p_id: null,
-            p_author_id: null,
-            p_first_name: null,
-            p_last_name: null,
-            p_email: null,
-            p_about_me: null,
+            // Profile variables
+            id: null,
+            author_id: null,
+            first_name: null,
+            last_name: null,
+            email: null,
+            about_me: null,
             is_editing_bio: false
         },
         methods: {
-            get_profiles: self.get_profiles,
             get_scrolls: self.get_scrolls,
-            get_favorites: self.get_favorites,
             get_more: self.get_more,
-            favorite_scroll: self.favorite_scroll,
-            unfavorite_scroll: self.unfavorite_scroll,
-            is_favorite: self.is_favorite,
             add_scroll_button: self.add_scroll_button,
             add_scroll: self.add_scroll,
             delete_scroll: self.delete_scroll,
             edit_scroll_button: self.edit_scroll_button,
             edit_scroll: self.edit_scroll,
-            view_profile: self.view_profile,
-            back_to_main: self.back_to_main,
 
+            get_profiles: self.get_profiles,
+            view_profile: self.view_profile,
             edit_bio_button: self.edit_bio_button,
-            edit_bio: self.edit_bio
+            edit_bio: self.edit_bio,
+
+            get_favorites: self.get_favorites,
+            view_user_favs: self.view_user_favs,
+            favorite_scroll: self.favorite_scroll,
+            unfavorite_scroll: self.unfavorite_scroll,
+            is_favorite: self.is_favorite,
+
+            back_to_main: self.back_to_main
         }
     });
 

@@ -74,8 +74,8 @@ def get_scrolls():
 def get_favorites():
     favorites_list = []
     if auth.user is not None:
-        # Get all the favorites the currently logged user has.
-        for r in db(db.favorites.logged_id == auth.user.id).select():
+        # Get all the favorites.
+        for r in db(db.favorites.logged_id).select():
             favorite = dict(
                 id = r.id,
                 logged_id = r.logged_id,
