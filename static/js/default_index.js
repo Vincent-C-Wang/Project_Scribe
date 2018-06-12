@@ -1,18 +1,30 @@
 // This is the js for the default/index.html view.
-
 var app = function() {
 
     var self = {};
-
+    //import _Quill from "vue-quill-editor";
     Vue.config.silent = false; // show all warnings
-    Vue.component('quill',{
-        data: function(){
-        return {
-            content: null
-            }
-        },
-    })
+    /*
+    var options = {
+    placeholder: 'Waiting for your precious content',
+    theme: 'snow'
+    };
 
+    var editor = new Quill('#quillEditor', options);
+    var preciousContent = document.getElementById('myPrecious');
+    var justTextContent = document.getElementById('justText');
+    var justHtmlContent = document.getElementById('justHtml');
+
+    editor.on('text-change', function() {
+    var delta = editor.getContents();
+    var text = editor.getText();
+    var justHtml = editor.root.innerHTML;
+    //preciousContent.innerHTML = JSON.stringify(delta);
+    //justTextContent.innerHTML = text;
+    //justHtmlContent.innerHTML = justHtml;
+    });
+    */
+    Vue.component('editor', );
     Vue.component('button-counter', {
         data: function () {
         return {
