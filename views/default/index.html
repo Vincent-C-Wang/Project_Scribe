@@ -299,24 +299,30 @@
     <!-- Show profile of specified user. -->
     <div v-if="is_profile_page" class="container middle max900">
       <button v-on:click="back_to_main()">Back</button>
-      <p><b>Name: </b> ${first_name} ${last_name}</p>
-      <p><b>Email: </b> ${email}</p>
-      <h5>
-        About Me
+      <br>
+      <div class="center">
+        <img class="bottom icon" src="https://i.imgur.com/aHBeRaF.png" alt="User logo">
+        <h4 >${first_name} ${last_name}</h4>
+        (Email: ${email})
+      </div>
 
-        <!-- Button to edit user bio -->
-        <button v-if="!is_editing_bio && author_id == logged_id"
+      <br>
+      <hr class="center">
+      <div>
+        <h5>
+          <h5 class="underline">About Me</h5>
+          <!-- Button to edit user bio -->
+          <button v-if="!is_editing_bio && author_id == logged_id"
                 v-on:click="edit_bio_button()">
-          <i class="fa fa-edit fa-lg"></i> Edit
-        </button>
-        <button v-if="is_editing_bio"
-                v-on:click="edit_bio_button()">
-          <i class="fa fa-times"></i> Cancel
-        </button>
-      </h5>
-
-      <p v-if="!is_editing_bio">${about_me}</p>
-
+            <i class="fa fa-edit fa-lg"></i> Edit
+          </button>
+          <button v-if="is_editing_bio"
+                  v-on:click="edit_bio_button()">
+            <i class="fa fa-times"></i> Cancel
+          </button>
+        </h5>
+        <p v-if="!is_editing_bio">${about_me}</p>
+      </div>
       <!-- Form to edit the bio -->
       <div v-if="is_editing_bio">
         <form action="#" v-on:submit.prevent="edit_bio(id)"
