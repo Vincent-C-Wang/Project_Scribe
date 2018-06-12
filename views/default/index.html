@@ -71,10 +71,10 @@
                 v-on:click="add_scroll_button()"
                 :disabled="!logged_in"
                 v-bind:class="{'disabled': !logged_in}">
-          Scribble
+          Scroll
         </button>
 
-        <h2>My Scribbles</h2>
+        <h2>My Scrolls</h2>
         <!-- Form to add scrolls -->
         <div v-if="is_adding_scroll" id="add_scroll_div">
           <form action="#" v-on:submit.prevent="add_scroll"
@@ -136,8 +136,12 @@
                       by ${scroll.author_name}
                     </button>
                   </div>
-                  <div class="scroll_abstract">${scroll.abstract}</div>
-                  <div class="scroll_content">${scroll.post}</div>
+                  <div class="scroll_abstract">tl;dr: ${scroll.abstract}</div>
+                    <div class="accordion">
+                        <input type="checkbox"id="x04">
+                        <label for="x04"></label>
+                        <div class="scroll_content">${scroll.post}</div>
+                    </div>
                 </div>
 
                 <!-- Form to edit scrolls -->
@@ -205,7 +209,7 @@
                                 v-on:click="edit_scroll_button(scroll.id)"
                                 :disabled="!logged_in"
                                 v-bind:class="{'disabled': !logged_in}">
-                          <i class="fa fa-edit fa-lg"></i> Edit Scribble
+                          <i class="fa fa-edit fa-lg"></i> Edit Scroll
                         </button>
                         <button v-if="scroll.is_editing == 'True'" class="btn"
                                 v-on:click="edit_scroll_button(scroll.id)">
@@ -218,14 +222,14 @@
                                 :disabled="!logged_in"
                                 v-bind:class="{'disabled': !logged_in}"
                                 v-if="is_favorite(logged_id, scroll.id) == false">
-                          <i class="fa fa-asterisk"></i>
+                          <i class="fa fa-star"></i>
                           Add to Favorites
                         </button>
                         <button v-on:click="unfavorite_scroll(logged_id, scroll.id)"
                                 :disabled="!logged_in"
                                 v-bind:class="{'disabled': !logged_in}"
                                 v-if="is_favorite(logged_id, scroll.id) == true">
-                          <i class="fa fa-asterisk"></i>
+                          <i class="fa fa-star"></i>
                           Favorited!
                         </button>
                       </div>
@@ -244,7 +248,7 @@
         </div>
         <!-- Show all other public memos below personal ones -->
         <div class="other_scrolls">
-          <h2>Other User Scribbles</h2>
+          <h2>Other User Scrolls</h2>
           <div>
             <ul>
               <li v-for="scroll in scroll_list">
@@ -257,8 +261,12 @@
                         by ${scroll.author_name}
                       </button>
                     </div>
-                    <div class="scroll_abstract">${scroll.abstract}</div>
-                    <div class="scroll_content">${scroll.post}</div>
+                    <div class="scroll_abstract">tl;dr: ${scroll.abstract}</div>
+                    <div class="accordion">
+                        <input type="checkbox"id="x05">
+                        <label for="x05"></label>
+                        <div class="scroll_content">${scroll.post}</div>
+                    </div>
 
                     <div>
                       <!-- List of buttons -->
@@ -271,14 +279,14 @@
                                     :disabled="!logged_in"
                                     v-bind:class="{'disabled': !logged_in}"
                                     v-if="is_favorite(logged_id, scroll.id) == false">
-                              <i class="fa fa-asterisk"></i>
+                              <i class="fa fa-star"></i>
                               Add to Favorites
                             </button>
                             <button v-on:click="unfavorite_scroll(logged_id, scroll.id)"
                                     :disabled="!logged_in"
                                     v-bind:class="{'disabled': !logged_in}"
                                     v-if="is_favorite(logged_id, scroll.id) == true">
-                              <i class="fa fa-asterisk"></i>
+                              <i class="fa fa-star"></i>
                               Favorited!
                             </button>
                           </div>
@@ -312,16 +320,13 @@
         <h5>
           <h5 class="underline">About Me</h5>
           <!-- Button to edit user bio -->
+            <p v-if="!is_editing_bio">${about_me}</p>
           <button v-if="!is_editing_bio && author_id == logged_id"
                 v-on:click="edit_bio_button()">
             <i class="fa fa-edit fa-lg"></i> Edit
           </button>
-          <button v-if="is_editing_bio"
-                  v-on:click="edit_bio_button()">
-            <i class="fa fa-times"></i> Cancel
-          </button>
         </h5>
-        <p v-if="!is_editing_bio">${about_me}</p>
+
       </div>
       <!-- Form to edit the bio -->
       <div v-if="is_editing_bio">
@@ -336,6 +341,10 @@
               <span class="help-block"></span>
             </div>
           </div>
+            <button v-if="is_editing_bio"
+                  v-on:click="edit_bio_button()">
+            <i class="fa fa-times"></i> Cancel
+          </button>
           <div class="form-group" id="submit_record__row">
             <div>
               <input class="btn btn-primary" id="edit_bio_submit"
@@ -345,15 +354,19 @@
         </form>
       </div>
 
-      <h5>My Scribbles</h5>
+      <h5>My Scrolls</h5>
       <div><ul>
         <li v-for="scroll in scroll_list">
           <!-- Scroll text -->
           <div v-if="scroll.author_id == author_id" class="memo">
             <div class="scroll_text" v-if="scroll.is_editing == 'False'">
               <div class="scroll_title">${scroll.title}</div>
-              <div class="scroll_abstract">${scroll.abstract}</div>
-              <div class="scroll_content">${scroll.post}</div>
+              <div class="scroll_abstract">tl;dr: ${scroll.abstract}</div>
+              <div class="accordion">
+                        <input type="checkbox"id="x06">
+                        <label for="x06"></label>
+                        <div class="scroll_content">${scroll.post}</div>
+                    </div>
             </div>
 
             <!-- Form to edit scrolls -->
@@ -421,7 +434,7 @@
                             v-on:click="edit_scroll_button(scroll.id)"
                             :disabled="!logged_in"
                             v-bind:class="{'disabled': !logged_in}">
-                      <i class="fa fa-edit fa-lg"></i> Edit Scribble
+                      <i class="fa fa-edit fa-lg"></i> Edit Scroll
                     </button>
                     <button v-if="scroll.is_editing == 'True'" class="btn"
                             v-on:click="edit_scroll_button(scroll.id)">
@@ -435,14 +448,14 @@
                             :disabled="!logged_in"
                             v-bind:class="{'disabled': !logged_in}"
                             v-if="is_favorite(logged_id, scroll.id) == false">
-                      <i class="fa fa-asterisk"></i>
+                      <i class="fa fa-star"></i>
                       Add to Favorites
                     </button>
                     <button v-on:click="unfavorite_scroll(logged_id, scroll.id)"
                             :disabled="!logged_in"
                             v-bind:class="{'disabled': !logged_in}"
                             v-if="is_favorite(logged_id, scroll.id) == true">
-                      <i class="fa fa-asterisk"></i>
+                      <i class="fa fa-star"></i>
                       Favorited!
                     </button>
                   </div>
@@ -457,7 +470,7 @@
 
     <!-- ******************************************************************************* -->
     <!-- ******************************************************************************* -->
-    <!-- Show list of favorite scribbles for specified user. -->
+    <!-- Show list of favorite Scrolls for specified user. -->
     <div v-if="is_favs_page" class="container middle max900">
       <button v-on:click="back_to_main()">Back</button>
 
@@ -473,8 +486,12 @@
                   by ${fav.author_name}
                 </button>
               </div>
-              <div class="scroll_abstract">${fav.abstract}</div>
-              <div class="scroll_content">${fav.post}</div>
+              <div class="scroll_abstract">tl;dr: ${fav.abstract}</div>
+              <div class="accordion">
+                        <input type="checkbox"id="x07">
+                        <label for="x07"></label>
+                        <div class="scroll_content">${fav.post}</div>
+                    </div>
 
               <div>
                 <!-- List of buttons -->
@@ -487,7 +504,7 @@
                               :disabled="!logged_in"
                               v-bind:class="{'disabled': !logged_in}"
                               v-if="is_favorite(logged_id, fav.s_id) == true">
-                        <i class="fa fa-asterisk"></i>
+                        <i class="fa fa-star"></i>
                         Unfavorited
                       </button>
                     </div>

@@ -7,8 +7,6 @@ button.author_link {
      border:none;
      padding:0!important;
      font: inherit;
-     /*border is optional*/
-     border-bottom:1px solid #444;
      cursor: pointer;
 }
 
@@ -35,15 +33,20 @@ div.add_btn a {
 div.memo {
   margin: 5px;
   border: 2px solid gray;
+  border-radius: 8px;
   padding: 5px;
 }
 /* line 21, ../sass/_main.scss */
-div.memo div.memo_title {
+div.memo div.scroll_title {
   font-weight: bold;
-  font-size: 150%;
+  font-size: 125%;
+}
+div.memo div.scroll_abstract{
+  font-style: italic;
 }
 /* line 25, ../sass/_main.scss */
 div.memo div.button_list {
+
   text-align: right;
   margin-top: 10px;
 }
@@ -56,18 +59,6 @@ div.memo div.button_list a.btn {
   padding: 10px;
 }
 
-/* line 38, ../sass/_main.scss */
-div.result_table {
-  width: 100%;
-}
-
-/* line 41, ../sass/_main.scss */
-table.track_table {
-  width: 100%;
-  margin-top: 10px;
-  margin-bottom: 10px;
-}
-
 /* line 47, ../sass/_main.scss */
 button:disabled {
   background-color: lightgray;
@@ -77,20 +68,6 @@ button:disabled:hover {
   box-shadow: none;
 }
 
-/* line 54, ../sass/_main.scss */
-td.play_selector {
-  width: 20px;
-}
-
-/* line 58, ../sass/_main.scss */
-div.music_controller {
-  width: 100%;
-  margin-bottom: 20px;
-}
-/* line 61, ../sass/_main.scss */
-div.music_controller audio {
-  width: 100%;
-}
 
 /* line 1, ../sass/_navbar.scss */
 .navbar-inverse {
@@ -169,9 +146,6 @@ img.logo {
     height: 60px;
 }
 
-div.aboutme{
-    border: 5px black;
-}
 
 hr {
   clear:both;
