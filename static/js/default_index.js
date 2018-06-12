@@ -1,28 +1,11 @@
-// This is the js for the default/index.html view.
- // attempted binding to a vue prototype to access methods
+//import quill from './VueQuillEditor' X
 
-//var toolbarOptions= [ ];
-
-//var quill =new Quill(‘#editor’,{
-
-//modules: {
-
-//toolbar: toolbarOptions
-
-//},
-
-//theme: ‘snow’
-
-//});
-
+//import Quill from "./quill-1.3.6/quill" type ="module";
+//let Quill = require('./quill-1.3.6/quill.js'); 
+//Object.definePrototype(Vue.prototype, '$quill', { value: quill }); X
 
 var app = function() {
-    import Quill from '/quill-1.3.6/quill.js';
-    Object.definePrototype(Vue.prototype, '$quill', { value: quill });
-    /*
-  
-    */
-
+   
     var self = {};
 
     Vue.config.silent = false; // show all warnings
