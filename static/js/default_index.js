@@ -5,6 +5,23 @@ var app = function() {
     var self = {};
 
     Vue.config.silent = false; // show all warnings
+    Vue.component('quill',{
+        data: function(){
+        return {
+            content: null
+            }
+        },
+    })
+
+    Vue.component('button-counter', {
+        data: function () {
+        return {
+        count: 0
+            }
+        },
+        template: '<button v-on:click="count++">You clicked me {{ count }} times.</button>'
+    })
+
 
     // Extends an array
     self.extend = function(a, b) {
@@ -225,6 +242,7 @@ var app = function() {
         delimiters: ['${', '}'],            //indicates vue object
         unsafeDelimiters: ['!{', '}'],
         data: {
+            content: null,
             is_main_page: true,
             is_profile_page: false,
             logged_in: false,
