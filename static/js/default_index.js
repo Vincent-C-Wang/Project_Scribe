@@ -221,9 +221,19 @@ var app = function() {
         self.vue.is_profile_page = true;
 
         var num_profs = self.vue.profile_list.length;
-        var prof_idx = author_id - (author_id - num_profs);
+        var prof_idx = 0;
 
-        if (num_profs != 0) {
+        if (num_profs < author_id) {
+            prof_idx = author_id - (author_id - num_profs);
+        }
+        else {
+            prof_idx = author_id;
+        }
+
+        console.log(author_id);
+        console.log(num_profs);
+
+        if (num_profs != 0 && prof_idx > 0) {
             self.vue.id = self.vue.profile_list[prof_idx-1].profile_id;
             self.vue.author_id = author_id;
             self.vue.first_name = self.vue.profile_list[prof_idx-1].first_name;
