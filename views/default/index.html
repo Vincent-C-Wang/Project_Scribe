@@ -37,9 +37,10 @@
       <label for="x03"><a>About Us</a></label>
       <div>
         <div class="padded white ">
-          <p class="center"> </p>Hello! We are four students from UCSC. We wanted to create a platform for users to be able to express themselves
-          in whatever creative form they wish and be able to get input from students and other people alike. We hope you
-          enjoy!
+          <p class="center"> </p>Hello! We are four students from UCSC. The idea behind this website was
+            to give people a way to post any type of writing of any length, whereas websites like Twitter
+            are based on short posts. In addition, we wanted to create another platform for users to be
+            able to express themselves.
         </div>
       </div>
     </div>
@@ -67,14 +68,18 @@
     <div v-if="is_main_page" class="my_scrolls">
       <div class="container middle max900">
         <!-- Button to add a new scroll -->
+        <div class="center">
+          <img class="bottom icon2" src="https://i.imgur.com/uQ6tImj.png">
+          <br>
+          <hr>
+        </div>
         <button v-if="!is_adding_scroll" class="right fa fa-pencil-square"
-                v-on:click="add_scroll_button()"
-                :disabled="!logged_in"
-                v-bind:class="{'disabled': !logged_in}">
+          v-on:click="add_scroll_button()"
+          :disabled="!logged_in"
+          v-bind:class="{'disabled': !logged_in}">
           Scroll
         </button>
-
-        <h2>My Scrolls</h2>
+        <h2 class="bottom">My Scrolls</h2>
         <!-- Form to add scrolls -->
         <div v-if="is_adding_scroll" id="add_scroll_div">
           <form action="#" v-on:submit.prevent="add_scroll"
@@ -461,8 +466,13 @@
     <!-- Show list of favorite Scrolls for specified user. -->
     <div v-if="is_favs_page" class="container middle max900">
       <button v-on:click="back_to_main()">Back</button>
-
-      <h5>My Favorites</h5>
+      <br>
+      <div class="center">
+        <img class="bottom icon2" src="https://i.imgur.com/TrCFRg5.png?1" alt="Shooting star">
+        <h4>My Favorites</h4>
+        <hr>
+      </div>
+      <br>
       <div><ul>
         <li v-for="fav in user_favorites">
           <!-- Scroll text -->
