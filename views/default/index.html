@@ -18,8 +18,25 @@
 {{end}}
 
 <div class="main_content">
-    <div id="vue-div" v-cloak class="display:none">
 
+    <div id="vue-div" v-cloak class="display:none">
+      <!-- test reference 
+      <nav>
+        <li><a href="profile.html"> user profile</a></li>
+      </nav>
+      -->
+      <div id="components-demo">
+      <button-counter></button-counter>
+      </div>
+
+
+      <div class="container">
+      <div id="editor">
+
+
+      </div>
+      </div>
+      
         <!-- ***** When logged off. ***** -->
         {{if auth.user is None:}}
         <img class="logo" src="https://i.imgur.com/JwiMl8k.png" alt="Scribe logo">
