@@ -331,7 +331,7 @@
               Follow
             </button>
             <button v-if="is_following(logged_id, author_id) == true"
-                    v-on:click="unfollow_user(author_id)">
+                    v-on:click="unfollow_user(logged_id, author_id)">
               Unfollow
             </button>
           </div>

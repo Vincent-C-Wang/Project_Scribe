@@ -167,7 +167,7 @@ def follow_user():
     )
 
 @auth.requires_signature()
-def unfollow_userl():
+def unfollow_user():
     # Delete an author from logged user's following list
     logger.info("Delete author_id from followings: %r", request.vars.author_id)
     db(db.follows.id == request.vars.fol_id).delete()
