@@ -182,4 +182,16 @@ def mark_read():
         scroll_id= request.vars.scroll_id,
         user_id = request.vars.logged_id
             )
+@auth.requires_signature()
+def is_read():
+    read = False
+    r = db(scrolls_read.logged_id == request.vars.logged_id &&
+     scrolls_read.scroll_id == request.vars.scroll_id).select()
+    
+    if r:
+        read= r.read
+
+    return response.json(
+        is_read = read
+    )
 

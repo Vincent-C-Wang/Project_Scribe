@@ -347,7 +347,13 @@ var app = function() {
     };
     self.is_read = function(){
         //if in database then it is counted as read
+        var read= false;
+        
+        $.getJSON(is_read_url,
+            read: is_read
+            )
 
+        return read;
     };
 
     // ***** Complete as needed. *****
