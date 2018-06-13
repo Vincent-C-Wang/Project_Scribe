@@ -39,6 +39,12 @@ db.define_table('follows',
                 Field('author_id')
                 )
 
+db.define_table('read_scroll',
+                Field('scroll_id'),
+                Field('user_id'),
+                Field('read', default= False)
+    )
+
 db.scrolls.updated_on.writable = db.scrolls.updated_on.readable = False
 db.scrolls.id.writable = db.scrolls.id.readable = False
 

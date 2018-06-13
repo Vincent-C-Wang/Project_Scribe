@@ -171,3 +171,14 @@ def unfollow_user():
     # Delete an author from logged user's following list
     logger.info("Delete author_id from followings: %r", request.vars.author_id)
     db(db.follows.id == request.vars.fol_id).delete()
+
+
+
+@auth.requires_signature()
+def mark_read():
+    logger.info("marked as read" request.vars.scroll_id)
+    db(db.read_scroll.user_id == request.vars.user_id &&
+     db.read_scroll.scroll_id == request.vars.scroll_id).update(
+        read = True
+     )
+
