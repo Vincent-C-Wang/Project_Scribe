@@ -120,6 +120,7 @@ def unfavorite_scroll():
 @auth.requires_signature()
 def add_scroll():
     # Inserts new scroll information
+
     db.scrolls.insert(
         author_name=request.vars.author_name,
         title = request.vars.title,
@@ -177,8 +178,8 @@ def unfollow_user():
 @auth.requires_signature()
 def mark_read():
     logger.info("marked as read" request.vars.scroll_id)
-    db(db.read_scroll.user_id == request.vars.user_id &&
-     db.read_scroll.scroll_id == request.vars.scroll_id).update(
-        read = True
-     )
+    db.scrolls_read.insert(
+        scroll_id= request.vars.scroll_id,
+        user_id = request.vars.user_id
+            )
 
