@@ -215,6 +215,7 @@ var app = function() {
 
     // Get all profile info from existing list of profiles
     self.view_profile = function(author_id) {
+        console.log(self.vue.profile_list[author_id-1].num_followers);
         self.vue.is_main_page = false;
         self.vue.is_favs_page = false;
         self.vue.is_fols_page = false;
@@ -226,6 +227,7 @@ var app = function() {
         self.vue.last_name = self.vue.profile_list[author_id-1].last_name;
         self.vue.email = self.vue.profile_list[author_id-1].author_email;
         self.vue.about_me = self.vue.profile_list[author_id-1].about_me;
+        self.vue.num_followers = self.vue.profile_list[author_id-1].num_followers;
     };
 
     self.edit_bio_button = function () {
@@ -372,6 +374,7 @@ var app = function() {
             last_name: null,
             email: null,
             about_me: null,
+            num_followers: null,
             is_editing_bio: false
         },
         methods: {

@@ -14,7 +14,8 @@ def get_profiles():
                     author_id = r.id,
                     author_email = r.email,
                     author_first_name = r.first_name,
-                    author_last_name = r.last_name
+                    author_last_name = r.last_name,
+                    num_followers = r.num_followers
                 )
         # Get profile info for all users.
         for p in db(db.profiles.id).select():
@@ -25,6 +26,7 @@ def get_profiles():
                 first_name = p.author_first_name,
                 last_name = p.author_last_name,
                 about_me = p.about_me,
+                num_followers = p.num_followers
             )
             profile_list.append(prof_info)
 
@@ -72,15 +74,30 @@ def get_scrolls():
 
 def get_follows():
     follows_list = []
+    followed = {}
     if auth.user is not None:
         # Get all the followed author IDs.
         for r in db(db.follows.logged_id).select():
+
+            # Count number of followers for each followed user
+            if r.author_id not in followed:
+                followed[r.author_id] = 1
+            else:
+                followed[r.author_id] += 1
+
             follow = dict(
                 id = r.id,
                 logged_id = r.logged_id,
                 author_id = r.author_id
             )
             follows_list.append(follow)
+
+    for user in followed:
+        db(db.profiles.author_id == user).update(
+            num_followers = followed[user]
+        )
+        # logger.info(user)
+
     return response.json(dict(
         follows_list = follows_list
     ))
