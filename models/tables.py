@@ -32,7 +32,12 @@ db.define_table('profiles',
                 Field('author_email'),
                 Field('author_first_name'),
                 Field('author_last_name'),
-                Field('about_me')
+                Field('about_me'),
+                Field('num_followers', default=0)
+                )
+db.define_table('follows',
+                Field('logged_id', 'reference auth_user', default=auth.user_id),
+                Field('author_id')
                 )
 
 db.scrolls.updated_on.writable = db.scrolls.updated_on.readable = False

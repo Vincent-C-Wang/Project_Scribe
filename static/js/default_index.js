@@ -61,6 +61,7 @@ var app = function() {
     self.view_user_favs = function(user_id) {
         self.vue.is_main_page = false;
         self.vue.is_favs_page = true;
+        self.vue.is_fols_page = false;
         self.vue.is_profile_page = false;
 
         var all_favs = self.vue.favorites_list;
@@ -216,6 +217,7 @@ var app = function() {
     self.view_profile = function(author_id) {
         self.vue.is_main_page = false;
         self.vue.is_favs_page = false;
+        self.vue.is_fols_page = false;
         self.vue.is_profile_page = true;
 
         self.vue.id = self.vue.profile_list[author_id-1].profile_id;
@@ -224,9 +226,10 @@ var app = function() {
         self.vue.last_name = self.vue.profile_list[author_id-1].last_name;
         self.vue.email = self.vue.profile_list[author_id-1].author_email;
         self.vue.about_me = self.vue.profile_list[author_id-1].about_me;
+        self.vue.num_followers = self.vue.profile_list[author_id-1].num_followers;
     };
 
-     self.edit_bio_button = function () {
+    self.edit_bio_button = function () {
         // The button to edit the "About Me" portion has been pressed.
         self.vue.is_editing_bio = !self.vue.is_editing_bio;
     };
@@ -244,9 +247,94 @@ var app = function() {
             });
     };
 
-    self.back_to_main = function(author_id) {
+    // *** Collect list of all followed authors from database. ***
+    self.get_follows = function(){
+        $.getJSON(
+            follows_url,
+            function (data) {
+                // Update the local data
+                self.vue.follows_list = data.follows_list
+            })
+    };
+
+    // Switch to page displaying specified user's followings
+    self.view_user_fols = function(user_id) {
+        self.vue.is_main_page = false;
+        self.vue.is_favs_page = false;
+        self.vue.is_fols_page = true;
+        self.vue.is_profile_page = false;
+
+        var all_fols = self.vue.follows_list;
+        var profs = self.vue.profile_list;
+        self.vue.user_follows = [];       //reinitialize list
+
+        var i, j;
+        for (i = 0; i < all_fols.length; i++) {
+            for (j = 0; j < profs.length; j++) {
+                if (all_fols[i].logged_id == user_id &&
+                    all_fols[i].author_id == profs[j].author_id) {
+                    self.vue.user_follows.push(
+                        {
+                            p_id: profs[j].id,
+                            author_id: profs[j].author_id,
+                            author_email: profs[j].author_email,
+                            author_first_name: profs[j].first_name,
+                            author_last_name: profs[j].last_name
+                        }
+                    );
+                }
+            }
+        }
+    };
+
+    self.follow_user = function (author_id) {
+        $.post(follow_user_url,
+            {
+                logged_id: self.vue.logged_id,
+                author_id: author_id,
+            },
+            function () {
+                self.get_scrolls();
+                self.get_follows();
+            })
+    };
+
+    self.unfollow_user = function (logged_id, author_id) {
+        var i;
+        var fol_id = null;
+        // Get database ID for the specified author to unfollow
+        for (i = 0; i < self.vue.follows_list.length; i++) {
+            if (logged_id == self.vue.follows_list[i].logged_id &&
+                author_id == self.vue.follows_list[i].author_id) {
+                fol_id = self.vue.follows_list[i].id;
+            }
+        }
+        $.post(unfollow_user_url,
+            {
+                fol_id: fol_id
+            },
+            function () {
+                self.get_scrolls();
+                self.get_follows();
+            })
+    };
+
+    self.is_following = function(logged_id, author_id) {
+        var i;
+        var is_fol = false;
+        for (i = 0; i < self.vue.follows_list.length; i++) {
+            if (logged_id == self.vue.follows_list[i].logged_id &&
+                author_id == self.vue.follows_list[i].author_id) {
+                is_fol = true;
+            }
+        }
+        return is_fol;
+    };
+
+    self.back_to_main = function() {
         self.vue.is_main_page = true;
         self.vue.is_profile_page = false;
+        self.vue.is_fols_page = false;
         self.vue.is_favs_page = false;
     };
 
@@ -258,6 +346,7 @@ var app = function() {
         data: {
             is_main_page: true,
             is_profile_page: false,
+            is_fols_page: false,
             is_favs_page: false,
             logged_in: false,
             logged_user: null,
@@ -267,12 +356,14 @@ var app = function() {
             scroll_list: [],
             favorites_list: [],
             user_favorites: [],
+            follows_list: [],
+            user_follows: [],
 
             has_more: false,
             is_adding_scroll: false,
             is_editing_scroll: false,
             form_title_add: null,
-            form_abstract_add: null, 
+            form_abstract_add: null,
             form_post_add: null,
 
             // Profile variables
@@ -282,6 +373,7 @@ var app = function() {
             last_name: null,
             email: null,
             about_me: null,
+            num_followers: null,
             is_editing_bio: false
         },
         methods: {
@@ -304,6 +396,12 @@ var app = function() {
             unfavorite_scroll: self.unfavorite_scroll,
             is_favorite: self.is_favorite,
 
+            get_follows: self.get_follows,
+            view_user_fols: self.view_user_fols,
+            follow_user: self.follow_user,
+            unfollow_user: self.unfollow_user,
+            is_following: self.is_following,
+
             back_to_main: self.back_to_main
         }
     });
@@ -311,6 +409,7 @@ var app = function() {
     // Get initial data
     self.get_profiles();
     self.get_scrolls();
+    self.get_follows();
     self.get_favorites();
     $("#vue-div").show();
 
