@@ -16,6 +16,7 @@
   var edit_bio_url = "{{=URL('api', 'edit_bio', user_signature=True)}}";
 </script>
 {{end}}
+<link href="https://fonts.googleapis.com/css?family=Kaushan+Script|Questrial" rel="stylesheet">
 
 <div class="main_content">
   <div id="vue-div" v-cloak class="display:none">
@@ -54,14 +55,17 @@
 
     <div class="black sidebar">
       <br>
-      <button class="side center padded fa fa-user" v-on:click="view_profile(logged_id)">
+      <button style="font-size: 20px" class="side center padded" v-on:click="view_profile(logged_id)">
+          <i class="fa fa-user"></i>
         Profile
       </button>
-      <button class="side center fa fa-user-plus">
-        Follows
+      <button style="font-size: 20px" class="side center">
+          <i class="fa fa-plus"></i>
+         <div style="margin-left: -2px">Follows</div>
       </button>
-      <button class="side center fa fa-star" v-on:click="view_user_favs(logged_id)">
-        Favorites
+      <button style="font-size: 20px" class="side center" v-on:click="view_user_favs(logged_id)">
+          <i class="fa fa-star"></i>
+        <div style="margin-left: -10px"> Favorites</div>
       </button>
     </div>
 
@@ -73,12 +77,15 @@
           <br>
           <hr>
         </div>
-        <button v-if="!is_adding_scroll" class="right fa fa-pencil-square"
-          v-on:click="add_scroll_button()"
-          :disabled="!logged_in"
-          v-bind:class="{'disabled': !logged_in}">
+        <button style="font-size: 16px"
+                v-if="!is_adding_scroll" class="right"
+                v-on:click="add_scroll_button()"
+                :disabled="!logged_in"
+                v-bind:class="{'disabled': !logged_in} ">
+            <i class="fa fa-pencil-square"></i>
           Scroll
         </button>
+
         <h2 class="bottom">My Scrolls</h2>
         <!-- Form to add scrolls -->
         <div v-if="is_adding_scroll" id="add_scroll_div">
@@ -498,7 +505,7 @@
                               :disabled="!logged_in"
                               v-bind:class="{'disabled': !logged_in}"
                               v-if="is_favorite(logged_id, fav.s_id) == true">
-                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star-o"></i>
                         Unfavorite
                       </button>
                     </div>
