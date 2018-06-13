@@ -215,7 +215,6 @@ var app = function() {
 
     // Get all profile info from existing list of profiles
     self.view_profile = function(author_id) {
-        console.log(self.vue.profile_list[author_id-1].num_followers);
         self.vue.is_main_page = false;
         self.vue.is_favs_page = false;
         self.vue.is_fols_page = false;
