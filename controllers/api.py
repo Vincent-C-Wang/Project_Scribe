@@ -180,6 +180,6 @@ def mark_read():
     logger.info("marked as read" request.vars.scroll_id)
     db.scrolls_read.insert(
         scroll_id= request.vars.scroll_id,
-        user_id = request.vars.user_id
+        user_id = request.vars.logged_id
             )
 

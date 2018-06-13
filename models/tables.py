@@ -41,7 +41,7 @@ db.define_table('follows',
 
 db.define_table('read_scroll',
                 Field('scroll_id'),
-                Field('user_id'),
+                Field('logged_id'),
                 Field('read', default= False)
     )
 

@@ -336,6 +336,19 @@ var app = function() {
         self.vue.is_fols_page = false;
         self.vue.is_favs_page = false;
     };
+    self.mark_read = function(logged_id, scroll_id){
+        // add to read database
+        $.post(mark_read_url,
+        {
+            logged_id: logged_id
+            scroll_id: scroll_id
+        })
+
+    };
+    self.is_read = function(){
+        //if in database then it is counted as read
+
+    };
 
     // ***** Complete as needed. *****
     self.vue = new Vue({
