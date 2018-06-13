@@ -32,7 +32,7 @@
   {{if auth.user is None:}}
     <img class="logo" src="https://i.imgur.com/JwiMl8k.png" alt="Scribe logo">
     <div>
-      <h3 class="center">Welcome to Scribe!</h3>
+      <h3 style="font-family: 'Kaushan Script', cursive" class="center">Welcome to Scribe!</h3>
       <p class="center">Here you can read and provide input on pieces of work created by other people and post your own!</p>
       <br>
       <p class="center">Please <b>LOGIN</b> to proceed!</p>
@@ -64,7 +64,7 @@
       <br>
       <button style="font-size: 20px" class="side center padded" v-on:click="view_profile(logged_id)">
           <i class="fa fa-user"></i>
-        Profile
+          Profile
       </button>
       <button style="font-size: 20px" class="side center" v-on:click="view_user_fols(logged_id)">
           <i class="fa fa-plus"></i>
@@ -90,10 +90,10 @@
                 :disabled="!logged_in"
                 v-bind:class="{'disabled': !logged_in} ">
             <i class="fa fa-pencil-square"></i>
-          Scroll
+            Scroll
         </button>
 
-        <h2 class="bottom">My Scrolls</h2>
+        <h2 style="font-family: 'Kaushan Script', cursive" class="bottom">My Scrolls</h2>
         <!-- Form to add scrolls -->
         <div v-if="is_adding_scroll" id="add_scroll_div">
           <form action="#" v-on:submit.prevent="add_scroll"
@@ -263,7 +263,7 @@
         </div>
         <!-- Show all other public memos below personal ones -->
         <div class="other_scrolls">
-          <h2>Other User Scrolls</h2>
+          <h2 style="font-family: 'Kaushan Script', cursive">Other User Scrolls</h2>
           <div>
             <ul>
               <li v-for="scroll in scroll_list">
@@ -320,7 +320,7 @@
       <br>
       <div class="center">
         <img class="bottom icon" src="https://i.imgur.com/aHBeRaF.png" alt="User logo">
-        <h4 >${first_name} ${last_name}</h4>
+        <h4 style="font-family: 'Kaushan Script', cursive">${first_name} ${last_name}</h4>
         (Email: ${email})
       </div>
 
@@ -337,9 +337,9 @@
                     v-on:click="unfollow_user(logged_id, author_id)">
               Unfollow
             </button>
-            Followers: ${num_followers}
+              <div style="font-family: 'Kaushan Script', cursive"> Followers: ${num_followers} </div>
           </div>
-          <h5 class="underline">About Me</h5>
+          <h5 style="font-family: 'Kaushan Script', cursive" class="underline">About Me</h5>
           <!-- Button to edit user bio -->
           <p v-if="!is_editing_bio">${about_me}</p>
           <button v-if="!is_editing_bio && author_id == logged_id"
@@ -375,7 +375,7 @@
         </form>
       </div>
 
-      <h5>My Scrolls</h5>
+      <h5 style="font-family: 'Kaushan Script', cursive">My Scrolls</h5>
       <div><ul>
         <li v-for="scroll in scroll_list">
           <!-- Scroll text -->
@@ -493,7 +493,7 @@
       <br>
       <div class="center">
         <img class="bottom icon2" src="https://i.imgur.com/TrCFRg5.png?1" alt="Shooting star">
-        <h4>My Favorites</h4>
+        <h4 style="font-family: 'Kaushan Script', cursive">My Favorites</h4>
         <hr>
       </div>
       <br>
@@ -540,7 +540,7 @@
     <div v-if="is_fols_page" class="container middle max900">
       <button v-on:click="back_to_main()">Back</button>
 
-      <h5>People I Follow</h5>
+      <h5 style="font-family: 'Kaushan Script', cursive">People I Follow</h5>
       <div><ul>
         <li v-for="fol in user_follows">
           ${fol.author_first_name} ${fol.author_last_name} (${fol.author_email})
