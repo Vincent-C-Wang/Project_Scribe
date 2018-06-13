@@ -316,7 +316,7 @@
     <!-- ******************************************************************************* -->
     <!-- Show profile of specified user. -->
     <div v-if="is_profile_page" class="container middle max900">
-      <button v-on:click="back_to_main()">Back</button>
+      <button class="fa fa-arrow-circle-o-left" v-on:click="back_to_main()"> Back</button>
       <br>
       <div class="center">
         <img class="bottom icon" src="https://i.imgur.com/aHBeRaF.png" alt="User logo">
@@ -329,7 +329,7 @@
       <div>
         <h5>
           <div class="center">
-            <button v-if="is_following(logged_id, author_id) == false"
+            <button  v-if="is_following(logged_id, author_id) == false"
                     v-on:click="follow_user(author_id)">
               Follow
             </button>
@@ -337,7 +337,8 @@
                     v-on:click="unfollow_user(logged_id, author_id)">
               Unfollow
             </button>
-              <div style="font-family: 'Kaushan Script', cursive"> Followers: ${num_followers} </div>
+            <div style="font-family: 'Kaushan Script', cursive; display: initial"> Followers: ${num_followers} </div>
+
           </div>
           <h5 style="font-family: 'Kaushan Script', cursive" class="underline">About Me</h5>
           <!-- Button to edit user bio -->
@@ -539,15 +540,20 @@
     <!-- Show list of favorite Scrolls for specified user. -->
     <div v-if="is_fols_page" class="container middle max900">
       <button v-on:click="back_to_main()">Back</button>
-
-      <h5 style="font-family: 'Kaushan Script', cursive">People I Follow</h5>
+      <div class="center">
+        <img class="bottom icon2" src="https://i.imgur.com/tUTSi1Y.png" alt="Follows">
+        <h5 style="font-family: 'Kaushan Script', cursive">People I Follow</h5>
+        <hr>
+        <br>
       <div><ul>
         <li v-for="fol in user_follows">
-          ${fol.author_first_name} ${fol.author_last_name} (${fol.author_email})
+          <button class="center author_link" v-on:click="view_profile(fol.author_id)">
+            ${fol.author_first_name} ${fol.author_last_name} (${fol.author_email})
+          </button>
         </li>
       </ul></div>
+      </div>
     </div>
-
   {{pass}}
   </div>
 </div>
