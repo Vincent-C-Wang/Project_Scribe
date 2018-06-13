@@ -9,12 +9,10 @@ var app = function() {
     placeholder: 'Waiting for your precious content',
     theme: 'snow'
     };
-
     var editor = new Quill('#quillEditor', options);
     var preciousContent = document.getElementById('myPrecious');
     var justTextContent = document.getElementById('justText');
     var justHtmlContent = document.getElementById('justHtml');
-
     editor.on('text-change', function() {
     var delta = editor.getContents();
     var text = editor.getText();
@@ -24,7 +22,10 @@ var app = function() {
     //justHtmlContent.innerHTML = justHtml;
     });
     */
-    Vue.component('editor', );
+    import quill from "components/01-example.vue";
+    
+    Vue.component('button-counter', 
+
     Vue.component('button-counter', {
         data: function () {
         return {
