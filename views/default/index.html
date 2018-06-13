@@ -136,12 +136,8 @@
                       by ${scroll.author_name}
                     </button>
                   </div>
-                  <div class="scroll_abstract">tl;dr: ${scroll.abstract}</div>
-                    <div class="accordion">
-                        <input type="checkbox"id="x04">
-                        <label for="x04"></label>
-                        <div class="scroll_content">${scroll.post}</div>
-                    </div>
+                    <div class="scroll_abstract">tl;dr: ${scroll.abstract}</div>
+                    <div class="scroll_content">${scroll.post}</div>
                 </div>
 
                 <!-- Form to edit scrolls -->
@@ -195,7 +191,7 @@
                     <div class="buttons">
 
                       <!-- Button to delete a scroll -->
-                      <div class="del_btn">
+                      <div class="inline del_btn">
                         <button v-on:click="delete_scroll(scroll.id)"
                                 :disabled="!logged_in"
                                 v-bind:class="{'disabled': !logged_in}">
@@ -204,7 +200,7 @@
                       </div>
 
                       <!-- Button to edit a scroll -->
-                      <div class="edit_btn">
+                      <div class="inline edit_btn">
                         <button v-if="scroll.is_editing == 'False'" class="btn"
                                 v-on:click="edit_scroll_button(scroll.id)"
                                 :disabled="!logged_in"
@@ -217,7 +213,7 @@
                         </button>
                       </div>
                       <!-- Button to add a scroll as a favorite -->
-                      <div class="fav_btn">
+                      <div class="inline fav_btn">
                         <button v-on:click="favorite_scroll(scroll.id, scroll.author_id)"
                                 :disabled="!logged_in"
                                 v-bind:class="{'disabled': !logged_in}"
@@ -261,12 +257,8 @@
                         by ${scroll.author_name}
                       </button>
                     </div>
-                    <div class="scroll_abstract">tl;dr: ${scroll.abstract}</div>
-                    <div class="accordion">
-                        <input type="checkbox"id="x05">
-                        <label for="x05"></label>
-                        <div class="scroll_content">${scroll.post}</div>
-                    </div>
+                      <div class="scroll_abstract">tl;dr: ${scroll.abstract}</div>
+                      <div class="scroll_content">${scroll.post}</div>
 
                     <div>
                       <!-- List of buttons -->
@@ -341,16 +333,16 @@
               <span class="help-block"></span>
             </div>
           </div>
-            <button v-if="is_editing_bio"
-                  v-on:click="edit_bio_button()">
-            <i class="fa fa-times"></i> Cancel
-          </button>
-          <div class="form-group" id="submit_record__row">
+          <div style="float: left" class="form-group" id="submit_record__row">
             <div>
               <input class="btn btn-primary" id="edit_bio_submit"
                      type="submit" value="Save" />
             </div>
           </div>
+            <button v-if="is_editing_bio"
+                  v-on:click="edit_bio_button()">
+            <i class="fa fa-times"></i> Cancel
+          </button>
         </form>
       </div>
 
@@ -362,11 +354,7 @@
             <div class="scroll_text" v-if="scroll.is_editing == 'False'">
               <div class="scroll_title">${scroll.title}</div>
               <div class="scroll_abstract">tl;dr: ${scroll.abstract}</div>
-              <div class="accordion">
-                        <input type="checkbox"id="x06">
-                        <label for="x06"></label>
-                        <div class="scroll_content">${scroll.post}</div>
-                    </div>
+                <div class="scroll_content">${scroll.post}</div>
             </div>
 
             <!-- Form to edit scrolls -->
@@ -420,7 +408,7 @@
                 <div class="buttons">
 
                   <!-- Button to delete a scroll -->
-                  <div class="del_btn" v-if="author_id == logged_id">
+                  <div class="inline del_btn" v-if="author_id == logged_id">
                     <button v-on:click="delete_scroll(scroll.id)"
                             :disabled="!logged_in"
                             v-bind:class="{'disabled': !logged_in}">
@@ -429,7 +417,7 @@
                   </div>
 
                   <!-- Button to edit a scroll -->
-                  <div class="edit_btn" v-if="author_id == logged_id">
+                  <div class="inline edit_btn" v-if="author_id == logged_id">
                     <button v-if="scroll.is_editing == 'False'" class="btn"
                             v-on:click="edit_scroll_button(scroll.id)"
                             :disabled="!logged_in"
@@ -443,7 +431,7 @@
                   </div>
 
                   <!-- Button to add a scroll as a favorite -->
-                  <div class="fav_btn">
+                  <div class="inline fav_btn">
                     <button v-on:click="favorite_scroll(scroll.id, scroll.author_id)"
                             :disabled="!logged_in"
                             v-bind:class="{'disabled': !logged_in}"
@@ -486,12 +474,8 @@
                   by ${fav.author_name}
                 </button>
               </div>
-              <div class="scroll_abstract">tl;dr: ${fav.abstract}</div>
-              <div class="accordion">
-                        <input type="checkbox"id="x07">
-                        <label for="x07"></label>
-                        <div class="scroll_content">${fav.post}</div>
-                    </div>
+                <div class="scroll_abstract">tl;dr: ${fav.abstract}</div>
+                <div class="scroll_content">${fav.post}</div>
 
               <div>
                 <!-- List of buttons -->
@@ -505,7 +489,7 @@
                               v-bind:class="{'disabled': !logged_in}"
                               v-if="is_favorite(logged_id, fav.s_id) == true">
                         <i class="fa fa-star"></i>
-                        Unfavorited
+                        Unfavorite
                       </button>
                     </div>
                   </div>

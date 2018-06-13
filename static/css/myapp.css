@@ -44,9 +44,9 @@ div.memo div.scroll_title {
 div.memo div.scroll_abstract{
   font-style: italic;
 }
+
 /* line 25, ../sass/_main.scss */
 div.memo div.button_list {
-
   text-align: right;
   margin-top: 10px;
 }
@@ -58,7 +58,6 @@ div.memo div.button_list div.buttons {
 div.memo div.button_list a.btn {
   padding: 10px;
 }
-
 /* line 47, ../sass/_main.scss */
 button:disabled {
   background-color: lightgray;
@@ -397,4 +396,9 @@ div.table_footer span.pagine.disabled i.fa {
 }
 .beige {
   background-color: #f9e9cf;
+}
+
+.inline {
+  display:inline-block;
+   margin-right:5px;
 }
