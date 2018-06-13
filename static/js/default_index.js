@@ -220,13 +220,18 @@ var app = function() {
         self.vue.is_fols_page = false;
         self.vue.is_profile_page = true;
 
-        self.vue.id = self.vue.profile_list[author_id-1].profile_id;
-        self.vue.author_id = author_id;
-        self.vue.first_name = self.vue.profile_list[author_id-1].first_name;
-        self.vue.last_name = self.vue.profile_list[author_id-1].last_name;
-        self.vue.email = self.vue.profile_list[author_id-1].author_email;
-        self.vue.about_me = self.vue.profile_list[author_id-1].about_me;
-        self.vue.num_followers = self.vue.profile_list[author_id-1].num_followers;
+        var num_profs = self.vue.profile_list.length;
+        var prof_idx = author_id - (author_id - num_profs);
+
+        if (num_profs != 0) {
+            self.vue.id = self.vue.profile_list[prof_idx-1].profile_id;
+            self.vue.author_id = author_id;
+            self.vue.first_name = self.vue.profile_list[prof_idx-1].first_name;
+            self.vue.last_name = self.vue.profile_list[prof_idx-1].last_name;
+            self.vue.email = self.vue.profile_list[prof_idx-1].author_email;
+            self.vue.about_me = self.vue.profile_list[prof_idx-1].about_me;
+            self.vue.num_followers = self.vue.profile_list[prof_idx-1].num_followers;
+        }
     };
 
     self.edit_bio_button = function () {

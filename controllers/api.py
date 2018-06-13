@@ -14,8 +14,7 @@ def get_profiles():
                     author_id = r.id,
                     author_email = r.email,
                     author_first_name = r.first_name,
-                    author_last_name = r.last_name,
-                    num_followers = r.num_followers
+                    author_last_name = r.last_name
                 )
         # Get profile info for all users.
         for p in db(db.profiles.id).select():
