@@ -34,6 +34,10 @@ db.define_table('profiles',
                 Field('author_last_name'),
                 Field('about_me')
                 )
+db.define_table('follows',
+                Field('logged_id', 'reference auth_user', default=auth.user_id),
+                Field('author_id')
+                )
 
 db.scrolls.updated_on.writable = db.scrolls.updated_on.readable = False
 db.scrolls.id.writable = db.scrolls.id.readable = False

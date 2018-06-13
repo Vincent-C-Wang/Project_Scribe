@@ -63,11 +63,26 @@ def get_scrolls():
         logged_user = auth.user.first_name + " " + auth.user.last_name
 
     return response.json(dict(
-        scroll_list=scroll_list,
-        logged_in=logged_in,
+        scroll_list = scroll_list,
+        logged_in = logged_in,
         logged_id = logged_id,
         logged_user = logged_user,
-        has_more=has_more,
+        has_more = has_more,
+    ))
+
+def get_follows():
+    follows_list = []
+    if auth.user is not None:
+        # Get all the followed author IDs.
+        for r in db(db.follows.logged_id).select():
+            follow = dict(
+                id = r.id,
+                logged_id = r.logged_id,
+                author_id = r.author_id
+            )
+            follows_list.append(follow)
+    return response.json(dict(
+        follows_list = follows_list
     ))
 
 
@@ -142,3 +157,17 @@ def edit_bio():
     db(db.profiles.id == request.vars.profile_id).update(
         about_me = request.vars.about_me
     )
+
+@auth.requires_signature()
+def follow_user():
+    # Add a new author to logged user's following list
+    db.follows.insert(
+        logged_id = request.vars.logged_id,
+        author_id = request.vars.author_id
+    )
+
+@auth.requires_signature()
+def unfollow_userl():
+    # Delete an author from logged user's following list
+    logger.info("Delete author_id from followings: %r", request.vars.author_id)
+    db(db.follows.id == request.vars.fol_id).delete()

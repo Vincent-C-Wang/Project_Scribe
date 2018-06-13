@@ -6,14 +6,21 @@
 <script>
   var profiles_url = "{{=URL('api', 'get_profiles')}}";
   var scrolls_url = "{{=URL('api', 'get_scrolls')}}";
+  var follows_url = "{{=URL('api', 'get_follows')}}";
   var favorites_url = "{{=URL('api', 'get_favorites')}}";
+
   var favorite_scroll_url = "{{=URL('api', 'favorite_scroll', user_signature=True)}}";
   var unfavorite_scroll_url = "{{=URL('api', 'unfavorite_scroll', user_signature=True)}}";
+
   var add_scroll_url = "{{=URL('api', 'add_scroll', user_signature=True)}}";
   var del_scroll_url = "{{=URL('api', 'del_scroll', user_signature=True)}}";
   var edit_scroll_button_url = "{{=URL('api', 'edit_scroll_button', user_signature=True)}}";
   var edit_scroll_url = "{{=URL('api', 'edit_scroll', user_signature=True)}}";
+
   var edit_bio_url = "{{=URL('api', 'edit_bio', user_signature=True)}}";
+
+  var follow_user_url = "{{=URL('api', 'follow_user', user_signature=True)}}";
+  var unfollow_user_url = "{{=URL('api', 'unfollow_user', user_signature=True)}}";
 </script>
 {{end}}
 
@@ -56,7 +63,7 @@
       <button class="side center padded fa fa-user" v-on:click="view_profile(logged_id)">
         Profile
       </button>
-      <button class="side center fa fa-user-plus">
+      <button class="side center fa fa-user-plus" v-on:click="view_user_fols(logged_id)">
         Follows
       </button>
       <button class="side center fa fa-star" v-on:click="view_user_favs(logged_id)">
@@ -137,11 +144,11 @@
                     </button>
                   </div>
                   <div class="scroll_abstract">tl;dr: ${scroll.abstract}</div>
-                    <div class="accordion">
-                        <input type="checkbox"id="x04">
-                        <label for="x04"></label>
-                        <div class="scroll_content">${scroll.post}</div>
-                    </div>
+                  <div class="accordion">
+                    <input type="checkbox"id="x04">
+                    <label for="x04"></label>
+                    <div class="scroll_content">${scroll.post}</div>
+                  </div>
                 </div>
 
                 <!-- Form to edit scrolls -->
@@ -263,9 +270,9 @@
                     </div>
                     <div class="scroll_abstract">tl;dr: ${scroll.abstract}</div>
                     <div class="accordion">
-                        <input type="checkbox"id="x05">
-                        <label for="x05"></label>
-                        <div class="scroll_content">${scroll.post}</div>
+                      <input type="checkbox"id="x05">
+                      <label for="x05"></label>
+                      <div class="scroll_content">${scroll.post}</div>
                     </div>
 
                     <div>
@@ -318,11 +325,21 @@
       <hr class="center">
       <div>
         <h5>
+          <div class="center">
+            <button v-if="is_following(logged_id, author_id) == false"
+                    v-on:click="follow_user(author_id)">
+              Follow
+            </button>
+            <button v-if="is_following(logged_id, author_id) == true"
+                    v-on:click="unfollow_user(author_id)">
+              Unfollow
+            </button>
+          </div>
           <h5 class="underline">About Me</h5>
           <!-- Button to edit user bio -->
-            <p v-if="!is_editing_bio">${about_me}</p>
+          <p v-if="!is_editing_bio">${about_me}</p>
           <button v-if="!is_editing_bio && author_id == logged_id"
-                v-on:click="edit_bio_button()">
+                  v-on:click="edit_bio_button()">
             <i class="fa fa-edit fa-lg"></i> Edit
           </button>
         </h5>
@@ -341,7 +358,7 @@
               <span class="help-block"></span>
             </div>
           </div>
-            <button v-if="is_editing_bio"
+          <button v-if="is_editing_bio"
                   v-on:click="edit_bio_button()">
             <i class="fa fa-times"></i> Cancel
           </button>
@@ -363,10 +380,10 @@
               <div class="scroll_title">${scroll.title}</div>
               <div class="scroll_abstract">tl;dr: ${scroll.abstract}</div>
               <div class="accordion">
-                        <input type="checkbox"id="x06">
-                        <label for="x06"></label>
-                        <div class="scroll_content">${scroll.post}</div>
-                    </div>
+                <input type="checkbox"id="x06">
+                <label for="x06"></label>
+                <div class="scroll_content">${scroll.post}</div>
+              </div>
             </div>
 
             <!-- Form to edit scrolls -->
@@ -470,7 +487,7 @@
 
     <!-- ******************************************************************************* -->
     <!-- ******************************************************************************* -->
-    <!-- Show list of favorite Scrolls for specified user. -->
+    <!-- Show list of followed users for specified user. -->
     <div v-if="is_favs_page" class="container middle max900">
       <button v-on:click="back_to_main()">Back</button>
 
@@ -488,10 +505,10 @@
               </div>
               <div class="scroll_abstract">tl;dr: ${fav.abstract}</div>
               <div class="accordion">
-                        <input type="checkbox"id="x07">
-                        <label for="x07"></label>
-                        <div class="scroll_content">${fav.post}</div>
-                    </div>
+                <input type="checkbox"id="x07">
+                <label for="x07"></label>
+                <div class="scroll_content">${fav.post}</div>
+              </div>
 
               <div>
                 <!-- List of buttons -->
@@ -513,6 +530,20 @@
               </div>
             </div>
           </div>
+        </li>
+      </ul></div>
+    </div>
+
+    <!-- ******************************************************************************* -->
+    <!-- ******************************************************************************* -->
+    <!-- Show list of favorite Scrolls for specified user. -->
+    <div v-if="is_fols_page" class="container middle max900">
+      <button v-on:click="back_to_main()">Back</button>
+
+      <h5>People I Follow</h5>
+      <div><ul>
+        <li v-for="fol in user_follows">
+          ${fol.author_first_name} ${fol.author_last_name} (${fol.author_email})
         </li>
       </ul></div>
     </div>
