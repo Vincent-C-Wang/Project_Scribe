@@ -1,5 +1,5 @@
 # Project Scribe
-This is a website using the frameworks web2py and Vue.js, and the Javascript library Jquery. It allows users to create their own 
+This is a website that utilizes the frameworks web2py and Vue.js, along with Ajax and Jquery, to allow users to create their own 
 posts (called "scrolls" or "scribbles"), toggle them public or private, edit them, and delete them. They may also view other users'
 posts.
 
